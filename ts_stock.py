@@ -27,7 +27,7 @@ def get_basic():
     res = pd.DataFrame()
     for ind in industry:
         cond = (df.industry == ind) & (df.pb > 0.0) & (df.pb < 1.2) & (df.pb > 0.1) & (df.pe < 50.0)
-        bank = df[["name", "industry", "pe", "pb", "esp","npr",]][cond].sort_values(by="pe")
+        bank = df[["name", "industry", "pe", "pb", "fixedAssets",]][cond].sort_values(by="pe")
         tmp = bank.head(100)
         res = pd.concat([res, tmp])
         res.to_csv("res.csv",sep="\t")
@@ -40,8 +40,8 @@ def get_profit(year=2017,quarter=4):
     else:
         profit = ts.get_profit_data(year, quarter)
         profit.to_csv(file_name,sep="\t",index=False)
-    cond = (profit.roe>5.0)# & (profit.profits>1.0)
-    res=profit[["code","net_profit_ratio","roe"]][cond].sort_values(by="roe")
+    cond = (profit.roe>8.0)# & (profit.profits>1.0)
+    res=profit[["code","net_profits","roe"]][cond].sort_values(by="roe")
     return res
 
 def get_growth(year=2018,quarter=1):
@@ -50,8 +50,17 @@ def get_growth(year=2018,quarter=1):
     res = df[["mbrg", "nprg", ]][cond].sort_values(by="mbrg")
     return res
 
+def get_em(df):
+    '''
+    计算获得权益乘数，越大表示公司的负债越高
+    :return:
+    '''
+    df["em"]=df["roe"]/df["npr"]/(df["business_income"]/df["totalAssets"])
+    return df
+
 basic=get_basic()
 profit=get_profit()
 res=basic.merge(profit,left_on='code',right_on='code')
-res.to_csv("basic_profit.tsv",sep="\t")
+res["roa"]=res["net_profits"]/res["fixedAssets"]*100
+res.sort_values(by="roa",ascending=False).to_csv("basic_profit.tsv",sep="\t")
 print(res.head(50))
