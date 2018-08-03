@@ -58,9 +58,15 @@ def get_em(df):
     df["em"]=df["roe"]/df["npr"]/(df["business_income"]/df["totalAssets"])
     return df
 
-basic=get_basic()
-profit=get_profit()
-res=basic.merge(profit,left_on='code',right_on='code')
-res["roa"]=res["net_profits"]/res["fixedAssets"]*100
-res.sort_values(by="roa",ascending=False).to_csv("basic_profit.tsv",sep="\t")
-print(res.head(50))
+def get_basic_stock():
+    basic = get_basic()
+    profit = get_profit()
+    res = basic.merge(profit, left_on='code', right_on='code')
+    res["roa"] = res["net_profits"] / res["fixedAssets"] * 100
+    columns = ['net_profits', 'fixedAssets', ]
+    res.drop(columns, inplace=True, axis=1)
+    res = res.round({"roa": 3, })
+    res.sort_values(by="roa", ascending=False).to_csv("basic_profit.tsv", sep="\t")
+    print(res.head(50))
+
+get_basic_stock()
