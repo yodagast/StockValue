@@ -26,7 +26,7 @@ def get_basic():
         f.close()
     res = pd.DataFrame()
     for ind in industry:
-        cond = (df.industry == ind) & (df.pb > 0.0) & (df.pb < 1.2) & (df.pb > 0.1) & (df.pe < 50.0)
+        cond = (df.industry == ind) & (df.pb > 0.0) & (df.pb < 1.2) & (df.pe > 0.1) & (df.pe < 50.0)
         bank = df[["name", "industry", "pe", "pb", "fixedAssets",]][cond].sort_values(by="pe")
         tmp = bank.head(100)
         res = pd.concat([res, tmp])
@@ -52,7 +52,7 @@ def get_growth(year=2018,quarter=1):
 
 def get_em(df):
     '''
-    计算获得权益乘数，越大表示公司的负债越高
+    计算获得权益乘数（1/(1-负债率)），越大表示公司的负债越高
     :return:
     '''
     df["em"]=df["roe"]/df["npr"]/(df["business_income"]/df["totalAssets"])
@@ -66,7 +66,7 @@ def get_basic_stock():
     columns = ['net_profits', 'fixedAssets', ]
     res.drop(columns, inplace=True, axis=1)
     res = res.round({"roa": 3, })
-    res.sort_values(by="roa", ascending=False).to_csv("basic_profit.tsv", sep="\t")
+    res.sort_values(by="pe", ascending=False).to_csv("basic_profit.tsv", sep="\t")
     print(res.head(50))
 
 get_basic_stock()
