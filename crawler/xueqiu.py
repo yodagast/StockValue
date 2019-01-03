@@ -39,20 +39,29 @@ def get_stock_info(code):
         return {}
     #result=urlopen(request).read().decode('utf-8')
     #result=get_html(url)
-    time.sleep(randint(3,27))
+    time.sleep(randint(3,10))
     for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "stock-compare-box"}):
         left = str(soup).find("<stock-compare :quote=")
         right = str(soup).rfind(",\"quoteMarket")
         soup = str(soup)[left + 23:right] + "}"
     return json.loads(soup)
 
+def get_codelist():
+    df = ts.get_stock_basics()
+    cond = (df.industry == "银行")# & (df.pb > 0.0) & (df.pb < 1.01) & (df.pe > 0.1) & (df.pe < 30.0)
+    bank = df[["name", "industry", "pe", "pb", "fixedAssets", ]][cond]
+    return bank.index.tolist()
 
 def get_stock_code():
-    codes=ts.get_stock_basics().index.tolist()
+    codes=get_codelist()
+    if(len(codes)<1):
+        codes=ts.get_stock_basics().index.tolist()
     res = pd.DataFrame()
-    #cnt=0
+    cnt=0
     for code in codes:
-        print(code)
+        #if(code[0]!='6'):
+        #   continue
+        print(code+"\t"+cnt)
         tmp = pd.DataFrame(get_stock_info(code), index=[0])
         res=res.append(tmp,ignore_index=True)
         #cnt=cnt+1
