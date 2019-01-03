@@ -26,27 +26,27 @@ def get_basic():
         f.close()
     res = pd.DataFrame()
     for ind in industry:
-        cond = (df.industry == ind) & (df.pb > 0.0) & (df.pb < 1.2) & (df.pe > 0.1) & (df.pe < 50.0)
+        cond = (df.industry == ind) & (df.pb > 0.0) & (df.pb < 3.0) & (df.pe > 0.1) & (df.pe < 50.0)
         bank = df[["name", "industry", "pe", "pb", "fixedAssets",]][cond].sort_values(by="pe")
         tmp = bank.head(100)
         res = pd.concat([res, tmp])
         res.to_csv("res.csv",sep="\t")
     return  res
 
-def get_profit(year=2017,quarter=4):
+def get_profit(year=2018,quarter=1):
     file_name="./data/profit_{}_{}.tsv".format(year,quarter)
     if (os.path.exists(file_name)):
         profit=pd.read_csv(file_name,sep="\t",dtype={'code':'object'})
     else:
         profit = ts.get_profit_data(year, quarter)
         profit.to_csv(file_name,sep="\t",index=False)
-    cond = (profit.roe>8.0)# & (profit.profits>1.0)
+    cond = (profit.roe>2.0)# & (profit.profits>1.0)
     res=profit[["code","net_profits","roe"]][cond].sort_values(by="roe")
     return res
 
-def get_growth(year=2018,quarter=1):
+def get_growth(year=2018,quarter=2):
     df = ts.get_growth_data(year, quarter)
-    cond = (df.mbrg > 5.0) & (df.nprg > 2.0)
+    cond = (df.mbrg > 5.0) & (df.nprg > 1.0)
     res = df[["mbrg", "nprg", ]][cond].sort_values(by="mbrg")
     return res
 
@@ -66,7 +66,7 @@ def get_basic_stock():
     columns = ['net_profits', 'fixedAssets', ]
     res.drop(columns, inplace=True, axis=1)
     res = res.round({"roa": 3, })
-    res.sort_values(by="pe", ascending=False).to_csv("basic_profit.tsv", sep="\t")
+    res.sort_values(by="industry", ascending=False).to_csv("basic_profit.tsv", sep="\t")
     print(res.head(50))
 
 get_basic_stock()
