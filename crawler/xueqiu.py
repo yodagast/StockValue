@@ -22,8 +22,8 @@ def get_html(url,retry_count = 5):
     return None
 
 def get_stock_columns(df):
-    columns=["code", "name", "current", "high", "high52w", "low", "low52w","limit_down", "limit_up",
-             "current_year_percent", "dividend_yield", "eps","navps", "pb", "pe_forecast", "pe_lyr", "pe_ttm", "profit", "profit_four"]
+    columns=["code", "name",  "dividend_yield", "eps",  "pe_ttm","current", "high52w",  "low52w","limit_down", "limit_up",
+             "current_year_percent","pe_forecast", "pe_lyr","pb" ,"navps", "profit", "profit_four"]
     return df[columns]
 
 def get_stock_info(code):
@@ -98,7 +98,7 @@ def main(argv=sys.argv):
         print(msg)
         print("for help use --help")
         sys.exit(2)
-    industry = ["小金属","铝","铜","普钢"]
+    industry = ["火力发电","新型电力","水力发电"]
     res = get_stock_code(industry)
     date = time.strftime("%Y-%m-%d", time.localtime())
     if (isinstance(industry, list)):
