@@ -1,4 +1,7 @@
 from urllib.request import Request, urlopen
+from apscheduler.schedulers.blocking import BlockingScheduler
+from datetime import datetime
+
 from bs4 import BeautifulSoup
 from random import randint
 import pandas as pd
@@ -91,6 +94,28 @@ def get_stock_code(industry,SH_only=False):
         #    break
     return res
 
+def compute_daily_stock(industry):
+    # industry = ["火力发电", "新型电力", "水力发电"]
+    # industry = ["小金属", "铝", "铜","普钢","特种钢"]
+    # industry =["水务","环境保护","园区开发"]
+    # industry=["房产服务","家用电器","水泥","全国地产"]
+    # industry = ["煤炭开采", "石油贸易", "石油加工"]
+    # industry=["医药商业", "医疗保健",]
+    # industry = [ "化学制药", "生物制药", "中成药"]
+    res = get_stock_code(industry)
+    date = time.strftime("%Y-%m-%d", time.localtime())
+    if (isinstance(industry, list)):
+        industry = "-".join(industry)
+        print(industry, end="\t")
+    if (os.path.exists("../data/{}".format(date)) == False):
+        os.mkdir("../data/{}".format(date))
+    get_stock_columns(res).sort_values(by=["eps", "current_year_percent", "pe_ttm"], ascending=[False, False, True]) \
+        .to_csv("../data/{0}/{1}.csv".format(date, industry), sep="\t", index=False)
+    print(res.shape)
+    time.sleep(300)
+    time.sleep(randint(1, 20))
+
+
 def main(argv=sys.argv):
     try:
         opts, args = getopt.getopt(sys.argv[1:], "h", ["help"])
@@ -98,22 +123,27 @@ def main(argv=sys.argv):
         print(msg)
         print("for help use --help")
         sys.exit(2)
+    #industry=[["化学制药","生物制药","中成药"],["铝", "普钢","特种钢"],
+    #          ["证券", "保险",],[ "银行","造纸"],
+    #          ["家用电器","汽车整车","汽车服务"],["煤炭开采", "石油贸易", "石油加工"]]
+    industry = [["化学制药", "生物制药", "中成药"],["证券", "保险",],[ "银行","造纸"],["煤炭开采", "石油贸易", "石油加工"]]
+    if(len(industry)<1):
+        return ;
+    elif(isinstance(industry[0],list)):
+        for ind in industry:
+            compute_daily_stock(ind)
+    else:
+        compute_daily_stock(industry)
     #industry = ["医药商业","医疗保健","化学制药","生物制药","中成药"]
     #industry = ["证券", "保险", "银行"]
-    industry = ["火力发电", "新型电力", "水力发电"]
-    industry = ["小金属", "铝", "铜","普钢","特种钢"]
-    industry = ["煤炭开采", "石油贸易", "石油加工"]
-    res = get_stock_code(industry)
-    date = time.strftime("%Y-%m-%d", time.localtime())
-    if (isinstance(industry, list)):
-        industry = "-".join(industry)
-    if(os.path.exists("../data/{}".format(date))==False):
-        os.mkdir("../data/{}".format(date))
-    get_stock_columns(res).sort_values(by=["eps","current_year_percent", "pe_ttm"], ascending=[False, False, True]) \
-        .to_csv("../data/{0}/{1}.csv".format( date,industry), sep="\t", index=False)
-    print(res.shape)
+
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    scheduler=BlockingScheduler()
+    scheduler.add_job(main,'cron', day_of_week='1-5', hour=11, minute=25)
+    scheduler.start()
+    #sys.exit(main())
 
 #print(res.head(2))
 #res_json=get_stock_info("002027")
