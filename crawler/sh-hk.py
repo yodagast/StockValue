@@ -39,3 +39,6 @@ def get_stock_AH(url="https://xueqiu.com/hq#AH"):
     if(len(soup)<5):
         soup = "{}"
     return json.loads(soup)
+
+def main():
+    url="http://www.szse.cn/certificate/individual/index.html?code=000001"

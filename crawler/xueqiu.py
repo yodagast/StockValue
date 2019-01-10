@@ -131,7 +131,7 @@ def main(argv=sys.argv):
     industry = [["化学制药", "生物制药", "中成药"],["证券", "保险",],
                 [ "银行","造纸"],["煤炭开采", "石油贸易", "石油加工","交通运输"],
                 ["家用电器","汽车整车","汽车服务","电器连锁"],["火力发电","新型电力","水利发电"],
-                ["医药商业","医疗保健","超市连锁"],["白酒",""]]
+                ["医药商业","医疗保健","超市连锁"],["白酒","乳制品"]]
     if(len(industry)<1):
         return ;
     elif(isinstance(industry[0],list)):
@@ -146,7 +146,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='1-5', hour=4, minute=25)
+    scheduler.add_job(main,'cron', day_of_week='1-5', hour=19, minute=28)
     scheduler.start()
     #sys.exit(main())
 
