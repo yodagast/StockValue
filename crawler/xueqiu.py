@@ -24,10 +24,12 @@ def get_html(url,retry_count = 5):
     delete_proxy(proxy)
     return None
 
-def get_stock_columns(df):
+def get_filter_stock_columns(df):
     columns=["code", "name",  "dividend_yield", "eps",  "pe_ttm","current", "high52w",  "low52w","limit_down", "limit_up",
              "current_year_percent","pe_forecast", "pe_lyr","pb" ,"navps", "profit", "profit_four"]
-    return df[columns]
+    cond =  (df.pb > 0.0) & (df.eps>0.1)&(df.dividend_yield>0.1)& (df.pe_ttm > 0.1) & (df.pe_ttm < 30.0)
+    df=df[columns][cond]
+    return df
 
 def get_stock_info(code):
     '''
@@ -109,7 +111,7 @@ def compute_daily_stock(industry):
         print(industry, end="\t")
     if (os.path.exists("../data/{}".format(date)) == False):
         os.mkdir("../data/{}".format(date))
-    get_stock_columns(res).sort_values(by=["eps", "current_year_percent", "pe_ttm"], ascending=[False, False, True]) \
+    get_filter_stock_columns(res).sort_values(by=["eps", "current_year_percent", "pe_ttm"], ascending=[False, False, True]) \
         .to_csv("../data/{0}/{1}.csv".format(date, industry), sep="\t", index=False)
     print(res.shape)
     time.sleep(300)
@@ -126,7 +128,10 @@ def main(argv=sys.argv):
     #industry=[["化学制药","生物制药","中成药"],["铝", "普钢","特种钢"],
     #          ["证券", "保险",],[ "银行","造纸"],
     #          ["家用电器","汽车整车","汽车服务"],["煤炭开采", "石油贸易", "石油加工"]]
-    industry = [["化学制药", "生物制药", "中成药"],["证券", "保险",],[ "银行","造纸"],["煤炭开采", "石油贸易", "石油加工"]]
+    industry = [["化学制药", "生物制药", "中成药"],["证券", "保险",],
+                [ "银行","造纸"],["煤炭开采", "石油贸易", "石油加工"],
+                ["家用电器","汽车整车","汽车服务"],["火力发电","新兴电力","水利发电"],
+                ["医药商业","医疗保健",""]]
     if(len(industry)<1):
         return ;
     elif(isinstance(industry[0],list)):
