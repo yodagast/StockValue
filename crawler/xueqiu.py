@@ -41,6 +41,13 @@ def get_stock_info(code):
         url="https://www.xueqiu.com/S/SH"+str(code)
     else:
         url="https://www.xueqiu.com/S/SZ"+str(code)
+    headers = {
+        'user-agent': '''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36''',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'accept-encoding': 'gzip, deflate', 'accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6',
+        'cache-control': 'max-age=0', 'connection': 'keep-alive',
+        'referer': 'www.bing.com'
+    }
     headers = {'User-Agent': 'Mozilla/5.0'}
     soup = {}
     request = Request(url, headers=headers)  # ('https://xueqiu.com/S/SH601318')

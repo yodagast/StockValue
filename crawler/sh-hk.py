@@ -7,6 +7,11 @@ from random import randint
 import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+#from selenium.webdriver.firefox.options import Options
+
+
 
 def get_stock_AH(url="https://xueqiu.com/hq#AH"):
     '''
@@ -23,6 +28,16 @@ def get_stock_AH(url="https://xueqiu.com/hq#AH"):
     }
     headers = {'User-Agent': 'Mozilla/5.0'}
     soup = {}
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--no-sandbox')  # # Bypass OS security model
+    options.add_argument('start-maximized')
+    options.add_argument('disable-infobars')
+    options.add_argument("--disable-extensions")
+    wd=webdriver.Chrome(chrome_options=options,executable_path="C:/Program Files/Google/Chrome/Application/chrome.exe")#,executable_path=)
+    #wd = webdriver.Firefox(executable_path="geckodriver.exe")
+    wd.get(url)
     request = Request(url, headers=headers)  # ('https://xueqiu.com/S/SH601318')
     try:
         result = urlopen(request).read().decode('utf-8')
