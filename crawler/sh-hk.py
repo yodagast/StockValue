@@ -8,8 +8,8 @@ import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-#from selenium.webdriver.firefox.options import Options
+#from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
 
 
 
@@ -35,7 +35,8 @@ def get_stock_AH(url="https://xueqiu.com/hq#AH"):
     options.add_argument('start-maximized')
     options.add_argument('disable-infobars')
     options.add_argument("--disable-extensions")
-    wd=webdriver.Chrome(chrome_options=options,executable_path="C:/Program Files/Google/Chrome/Application/chrome.exe")#,executable_path=)
+    path="/usr/bin/firefox"  #"C:/Program Files/Google/Chrome/Application/chrome.exe"
+    wd=webdriver.Firefox(options=options,executable_path=path)#,executable_path=)
     #wd = webdriver.Firefox(executable_path="geckodriver.exe")
     wd.get(url)
     request = Request(url, headers=headers)  # ('https://xueqiu.com/S/SH601318')
@@ -46,14 +47,16 @@ def get_stock_AH(url="https://xueqiu.com/hq#AH"):
     #result=urlopen(request).read().decode('utf-8')
     #result=get_html(url)
     time.sleep(randint(1,10))
-    for soup in BeautifulSoup(result, 'html.parser').find_all("div",{"class":"stocklist-wrapper"}):
-        print(soup)
-        left = str(soup).find("<stock-compare :quote=")
-        right = str(soup).rfind(",\"quoteMarket")
-        soup = str(soup)[left + 23:right] + "}"
+    #for soup in BeautifulSoup(result, 'html.parser').find_all("div",{"class":"stocklist-wrapper"}):
+     #   print(soup)
+     #   left = str(soup).find("<stock-compare :quote=")
+      #  right = str(soup).rfind(",\"quoteMarket")
+      #  soup = str(soup)[left + 23:right] + "}"
+    print(result)
     if(len(soup)<5):
         soup = "{}"
     return json.loads(soup)
 
 def main():
-    url="http://www.szse.cn/certificate/individual/index.html?code=000001"
+    url="https://xueqiu.com/hq#AH"
+main()
