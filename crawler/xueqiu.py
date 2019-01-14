@@ -144,8 +144,10 @@ def main(argv=sys.argv):
     elif(isinstance(industry[0],list)):
         for ind in industry:
             compute_daily_stock(ind)
+            print(ind, end="\t")
     else:
         compute_daily_stock(industry)
+        print(industry, end="\t")
     #industry = ["医药商业","医疗保健","化学制药","生物制药","中成药"]
     #industry = ["证券", "保险", "银行"]
 
@@ -153,7 +155,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='1-5', hour=9, minute=17)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=22, minute=37)
     scheduler.start()
     #sys.exit(main())
 
