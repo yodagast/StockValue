@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from random import randint
 import pandas as pd
 import tushare as ts
-import sys,getopt,time,json,requests,urllib,os
+import sys,getopt,time,json,requests,urllib,os,platform
 from selenium import webdriver
 #from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.firefox.options import Options
@@ -35,7 +35,9 @@ def get_stock_AH(url="https://xueqiu.com/hq#AH"):
     options.add_argument('start-maximized')
     options.add_argument('disable-infobars')
     options.add_argument("--disable-extensions")
-    path="/usr/bin/firefox"  #"C:/Program Files/Google/Chrome/Application/chrome.exe"
+    path="/usr/bin/firefox"
+    if(platform.system()=="Windows"):
+         path="C:/Program Files/Google/Chrome/Application/chrome.exe"
     wd=webdriver.Firefox(options=options,executable_path=path)#,executable_path=)
     #wd = webdriver.Firefox(executable_path="geckodriver.exe")
     wd.get(url)

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from random import randint
 import pandas as pd
 import tushare as ts
-import sys,getopt,time,json,requests,urllib,os
+import sys,getopt,time,json,requests,urllib,os,platform
 
 def get_proxy():
     return requests.get("http://127.0.0.1:5010/get/").content
