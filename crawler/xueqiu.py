@@ -112,6 +112,10 @@ def compute_daily_stock(industry):
     # industry=["医药商业", "医疗保健",]
     # industry = [ "化学制药", "生物制药", "中成药"]
     res = get_stock_code(industry)
+    if(len(res)<1):
+        print("!!!!!! NO STOCK CODE FOUND!!!!!!!")
+        time.sleep(10)
+        return
     date = time.strftime("%Y-%m-%d", time.localtime())
     if (isinstance(industry, list)):
         industry = "-".join(industry)
@@ -136,11 +140,11 @@ def main(argv=sys.argv):
     #          ["证券", "保险",],[ "银行","造纸"], ["家用电器","汽车整车","汽车服务","电器连锁"],
     #          ["家用电器","汽车整车","汽车服务"],["煤炭开采", "石油贸易", "石油加工"]]
     industry = [["化学制药", "生物制药", "中成药"],["证券", "保险"],
-                [ "银行","造纸","全国地产"],["煤炭开采", "石油贸易", "石油加工","公共交通"],
+                [ "银行","造纸",],["煤炭开采", "石油贸易", "石油加工","公共交通"],
                 ["火力发电","新型电力","水利发电"],
-                ["医药商业","医疗保健","超市连锁"],["白酒","乳制品","农业综合"]]
+                ["医药商业","医疗保健","超市连锁"],["白酒","乳制品","农业综合"],["全国地产","区域地产"]]
     if(len(industry)<1):
-        return ;
+        print("!!!!!!!!NO category found!!!!!!!");
     elif(isinstance(industry[0],list)):
         for ind in industry:
             compute_daily_stock(ind)
@@ -155,7 +159,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=10, minute=50)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=14, minute=2)
     scheduler.start()
     #sys.exit(main())
 
