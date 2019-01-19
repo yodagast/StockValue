@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 git add .
-git commit -m "rm bad features and add new features"
+git commit -m "add exchange-fund data"
 git push origin master
