@@ -133,13 +133,15 @@ def get_fund_info_qq(code):
         return pd.DataFrame(soup)
     time.sleep(randint(3, 10))
     dict={}
+    dict["url"]=url
     try:
         for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "item_left fl"}):
             dict["实时报价"] = soup.find("span", {"id": "main0"}).get_text()  # 实时报价
             dict["涨幅"] = soup.find("li", {"id": "main1"}).get_text()  # 涨幅
             dict["增长率"] = soup.find("li", {"id": "main2"}).get_text()  # 增长率
+            #print(dict["实时报价"] +"\t"+ dict["涨幅"]+"\t"+dict["增长率"]  )
         for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "item_right fl"}):
-            dict["折溢价"] = soup.find("span", {"id": "main9"}).get_text()  # 折溢价
+            dict["折溢价"] = soup.find("span", {"id": "main8"}).get_text()  # 折溢价
             dict["开盘价"] = soup.find("span", {"id": "main9"}).get_text()  # 开盘价
             dict["昨日收盘"] = soup.find("span", {"id": "main10"}).get_text()  # 昨日收盘
             dict["最高价"] = soup.find("span", {"id": "main11"}).get_text()  # 最高价
@@ -148,8 +150,17 @@ def get_fund_info_qq(code):
             dict["日期"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[0].get_text()  # 日期
             dict["最新规模"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[1].get_text()  # 最新规模
             dict["交易状态"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[2].get_text()  # 交易状态
+        #print(dict["折溢价"]+"\t"+dict["开盘价"] +"\t"+dict["昨日收盘"]+"\t"+dict["最高价"] +"\t"+dict["日期"],end="\t" )
+        print(dict)
+        #for soup in BeautifulSoup(result, 'html.parser').find("div",{"class":"type4"}).select("div",{"class":"col_3"}):
+         #   print(soup.get_text())
+            #dict["净值增长率"]=soup.find_all("tr")[1].get_text()
+        #for soup in BeautifulSoup(result, 'html.parser').select("#portfolio > div.portfolio_content > div.col_3 > div"):
+        #    dict["重仓股票链接"]=soup.get_text()
+    except Exception as e:
+        print(e)
     finally:
-        return {}
+        return dict
     return dict
 
 
@@ -184,12 +195,12 @@ def main_qq():
         if (row["StructuredFund"] == True):
             continue
         print(row["id"] + "\t" + row["name"] + "\t" + str(row["StructuredFund"]), end="\t")
-        res = get_fund_info_qq(row["id"])
-        print(res)
-        #cnt=cnt+1
-        #if(cnt>10):break
-        list.append(res)
-    pd.DataFrame(list).to_csv("../fund/tmp.csv",sep="\t",index=False)
+        dict = get_fund_info_qq(row["id"])
+        print(dict)
+        cnt=cnt+1
+        if(cnt>5):break
+        list.append(dict)
+    pd.DataFrame(list).to_csv("../fund/fund-detail.csv",sep="\t",index=False)
 
 main_qq()
 
