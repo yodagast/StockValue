@@ -61,7 +61,7 @@ def get_fund_list(url):
     #print("!!!!!!\n\t\n!!!!!")
     return res
 
-def get_fund_info(code):
+def get_fund_info_sina_etf(code):
     url="http://fund.eastmoney.com/{}.html".format(code)
     url="http://finance.sina.com.cn/fund/quotes/{}/bc.shtml".format(code)
     headers = {
@@ -87,7 +87,7 @@ def get_fund_info(code):
         #for tmp in soup.find_all("dl",{"class":"floatleft"}):
         #    print(tmp.get_text())
 
-def get_fund_info1(code):
+def get_fund_info_sina1(code):
     url = "http://finance.sina.com.cn/fund/quotes/{}/bc.shtml".format(code)
     headers = {
         'user-agent': '''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36''',
@@ -110,6 +110,49 @@ def get_fund_info1(code):
         list.append(soup.get_text())
     return list;
 
+def get_fund_info_qq(code):
+    '''
+
+    :param code: 输入基金代码
+    :return:   返回基金详细信息 dict
+    '''
+    url="http://gu.qq.com/jj{}".format(code)
+    headers = {
+        'user-agent': '''Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36''',
+        'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'accept-encoding': 'gzip, deflate', 'accept-Language': 'zh-CN,zh;q=0.8,en;q=0.6',
+        'cache-control': 'max-age=0', 'connection': 'keep-alive',
+        'referer': 'www.bing.com'
+    }
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    soup = {}
+    request = Request(url, headers=headers)
+    try:
+        result = urlopen(request).read().decode("utf-8", errors="ignore")
+    except urllib.error.URLError as e:
+        return pd.DataFrame(soup)
+    time.sleep(randint(3, 10))
+    dict={}
+    try:
+        for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "item_left fl"}):
+            dict["实时报价"] = soup.find("span", {"id": "main0"}).get_text()  # 实时报价
+            dict["涨幅"] = soup.find("li", {"id": "main1"}).get_text()  # 涨幅
+            dict["增长率"] = soup.find("li", {"id": "main2"}).get_text()  # 增长率
+        for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "item_right fl"}):
+            dict["折溢价"] = soup.find("span", {"id": "main9"}).get_text()  # 折溢价
+            dict["开盘价"] = soup.find("span", {"id": "main9"}).get_text()  # 开盘价
+            dict["昨日收盘"] = soup.find("span", {"id": "main10"}).get_text()  # 昨日收盘
+            dict["最高价"] = soup.find("span", {"id": "main11"}).get_text()  # 最高价
+            dict["最低价"] = soup.find("span", {"id": "main12"}).get_text()  # 最低价
+            dict["成交量"] = soup.find("span", {"id": "main13"}).get_text()  # 成交量
+            dict["日期"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[0].get_text()  # 日期
+            dict["最新规模"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[1].get_text()  # 最新规模
+            dict["交易状态"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[2].get_text()  # 交易状态
+    finally:
+        return {}
+    return dict
+
+
 def stock_df_to_csv(df,name="cnjj"):
     date = time.strftime("%Y-%m-%d", time.localtime())
     if (os.path.exists("../fund/") == False):
@@ -117,17 +160,50 @@ def stock_df_to_csv(df,name="cnjj"):
     if (os.path.exists("../fund/{}".format(date)) == False):
         os.mkdir("../fund/{}".format(date))
     df.to_csv("../fund/{0}/{1}.csv".format(date,name),sep="\t", index=False)
-tmp=get_fund_list(url)
-res=pd.DataFrame(tmp)
-stock_df_to_csv(res)
-res["StructuredFund"]=res["name"].str.contains("A|B|分级",regex=True)
-for idx,row in res.iterrows():
-    if(row["StructuredFund"]==True):
-        continue
-    print(row["id"]+"\t"+row["name"]+"\t"+str(row["StructuredFund"]),end="\t")
-    res=get_fund_info(row["id"])
-    if(len(res)<1):
-        res=get_fund_info1(row["id"])
-    print(res)
 
-#res.columns=['id', 'name', 'ping_1', 'ping_2', 'ping_3', 'ping_4', 'ping_5','ping_6', 'ping_7', 'ping_8', 'zhang_1', 'zhang_2']
+def fund_info_to_csv(df):
+    df["StructuredFund"] = df["name"].str.contains("A|B|分级", regex=True)
+    list=[]
+    for idx, row in res.iterrows():
+        if (row["StructuredFund"] == True):
+            continue
+        print(row["id"] + "\t" + row["name"] + "\t" + str(row["StructuredFund"]), end="\t")
+        res = get_fund_info_sina_etf(row["id"])
+        if (len(res) < 1):
+            res = get_fund_info_sina1(row["id"])
+        list.append(res)
+
+def main_qq():
+    tmp = get_fund_list(url)
+    res = pd.DataFrame(tmp)
+    stock_df_to_csv(res)
+    list=[]
+    cnt=0
+    res["StructuredFund"] = res["name"].str.contains("A|B|分级", regex=True)
+    for idx, row in res.iterrows():
+        if (row["StructuredFund"] == True):
+            continue
+        print(row["id"] + "\t" + row["name"] + "\t" + str(row["StructuredFund"]), end="\t")
+        res = get_fund_info_qq(row["id"])
+        print(res)
+        #cnt=cnt+1
+        #if(cnt>10):break
+        list.append(res)
+    pd.DataFrame(list).to_csv("../fund/tmp.csv",sep="\t",index=False)
+
+main_qq()
+
+def main():
+    tmp = get_fund_list(url)
+    res = pd.DataFrame(tmp)
+    stock_df_to_csv(res)
+    res["StructuredFund"] = res["name"].str.contains("A|B|分级", regex=True)
+    for idx, row in res.iterrows():
+        if (row["StructuredFund"] == True):
+            continue
+        print(row["id"] + "\t" + row["name"] + "\t" + str(row["StructuredFund"]), end="\t")
+        res = get_fund_info_sina_etf(row["id"])
+        if (len(res) < 1):
+            res = get_fund_info_sina1(row["id"])
+        print(res)
+        # res.columns=['id', 'name', 'ping_1', 'ping_2', 'ping_3', 'ping_4', 'ping_5','ping_6', 'ping_7', 'ping_8', 'zhang_1', 'zhang_2']
