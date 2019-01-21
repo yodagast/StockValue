@@ -25,8 +25,8 @@ def get_html(url,retry_count = 5):
     return None
 
 def get_filter_stock_columns(df):
-    columns=["code", "name",  "dividend_yield", "eps",  "pe_ttm","current","low52w","high52w",
-             "current_year_percent","pe_forecast", "pe_lyr","pb" ,"navps", "profit", "profit_four"]
+    columns=["code", "name", "eps",  "pe_ttm","pb" ,"dividend_yield","current","low52w","high52w",
+             "current_year_percent","pe_forecast", "pe_lyr","navps", "profit", "profit_four"]
     cond =  (df.pb > 0.0) & (df.eps>0.1)&(df.dividend_yield>0.1)& (df.pe_ttm > 0.1) #& (df.pe_ttm < 30.0)
     df=df[columns][cond]
     return df
@@ -163,7 +163,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=14, minute=2)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=21, minute=48)
     scheduler.start()
     #sys.exit(main())
 
