@@ -135,6 +135,8 @@ def get_fund_info_qq(code):
     dict={}
     dict["url"]=url
     try:
+        for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "titile"}):
+            dict["name"]=soup.find("span",{"class","col_1"}).get_text()
         for soup in BeautifulSoup(result, 'html.parser').find_all("div", {"class": "item_left fl"}):
             dict["实时报价"] = soup.find("span", {"id": "main0"}).get_text()  # 实时报价
             dict["涨幅"] = soup.find("li", {"id": "main1"}).get_text()  # 涨幅
@@ -163,6 +165,10 @@ def get_fund_info_qq(code):
         return dict
     return dict
 
+def filter_fund(df):
+    df= df.replace({'成交量': '--','最新规模':'亿元'}, {'成交量': '0','最新规模':""}, regex=True)
+    cond = (df["成交量"]!="--") & (df["增长率"]!="0.00%") & (df.dividend_yield > 0.1) & (df.pe_ttm > 0.1)
+    return df[cond]
 
 def stock_df_to_csv(df,name="cnjj"):
     date = time.strftime("%Y-%m-%d", time.localtime())
@@ -197,10 +203,11 @@ def main_qq():
         print(row["id"] + "\t" + row["name"] + "\t" + str(row["StructuredFund"]), end="\t")
         dict = get_fund_info_qq(row["id"])
         print(dict)
-        cnt=cnt+1
-        if(cnt>5):break
+        #cnt=cnt+1
+        #if(cnt>5):break
         list.append(dict)
-    pd.DataFrame(list).to_csv("../fund/fund-detail.csv",sep="\t",index=False)
+    date = time.strftime("%Y-%m-%d", time.localtime())
+    pd.DataFrame(list).sort_values(by=["增长率"]).to_csv("../fund/fund-detail-{}.csv".format(date),sep="\t",index=False)
 
 main_qq()
 
