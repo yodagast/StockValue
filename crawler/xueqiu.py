@@ -139,11 +139,12 @@ def main(argv=sys.argv):
     #industry=[["化学制药","生物制药","中成药"],["铝", "普钢","特种钢"],
     #          ["证券", "保险",],[ "银行","造纸"], ["家用电器","汽车整车","汽车服务","电器连锁"],
     #          ["家用电器","汽车整车","汽车服务"],["煤炭开采", "石油贸易", "石油加工"]]
-    industry = [["银行","白酒","乳制品"],
+    industry = [["银行",],
                ["化学制药", "生物制药", "中成药"],
                 ["汽车配件","汽车整车","纺织机械"],
                 ["造纸","水泥","空运"],
                 ["建筑施工","环境保护",],
+                ["白酒","乳制品"],
                 ["煤炭开采", "石油加工","石油开采"],
                 ["特种钢","矿物制品","普钢"],
                 ["火力发电","新型电力","水利发电"],
@@ -167,7 +168,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=21, minute=48)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=21, minute=54)
     scheduler.start()
     #sys.exit(main())
 
