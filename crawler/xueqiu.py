@@ -31,7 +31,7 @@ def get_filter_stock_columns(df):
              "current_year_percent","pe_forecast", "pe_lyr","navps", "profit", "profit_four"]
     cond =  (df.pb > 0.0) & (df.eps>0.1)&(df.dividend_yield>0.1)& (df.pe_ttm > 0.1) #& (df.pe_ttm < 30.0)
     df=df[columns][cond]
-    df["expect_current"]=df["eps"]*df["pettm"]
+    df["expect_current"]=df["eps"]*df["pe_ttm"]
     df["acc_price"]=df.apply(lambda x:func(x.current,x.expect_current),axis=1)
     return df
 
@@ -172,7 +172,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=21, minute=46)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=22, minute=23)
     scheduler.start()
     #sys.exit(main())
 
