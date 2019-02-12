@@ -25,7 +25,7 @@ def get_html(url,retry_count = 5):
     return None
 
 def func(a,b):
-    return a>b
+    return float(a)>float(b)
 def get_filter_stock_columns(df):
     columns=["code", "name", "eps",  "pe_ttm","pb" ,"dividend_yield","current","low52w","high52w",
              "current_year_percent","pe_forecast", "pe_lyr","navps", "profit", "profit_four"]
@@ -172,7 +172,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=22, minute=23)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=22, minute=42)
     scheduler.start()
     #sys.exit(main())
 
