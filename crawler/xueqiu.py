@@ -24,11 +24,15 @@ def get_html(url,retry_count = 5):
     delete_proxy(proxy)
     return None
 
+def func(a,b):
+    return a>b
 def get_filter_stock_columns(df):
     columns=["code", "name", "eps",  "pe_ttm","pb" ,"dividend_yield","current","low52w","high52w",
              "current_year_percent","pe_forecast", "pe_lyr","navps", "profit", "profit_four"]
     cond =  (df.pb > 0.0) & (df.eps>0.1)&(df.dividend_yield>0.1)& (df.pe_ttm > 0.1) #& (df.pe_ttm < 30.0)
     df=df[columns][cond]
+    df["expect_current"]=df["eps"]*df["pettm"]
+    df["acc_price"]=df.apply(lambda x:func(x.current,x.expect_current),axis=1)
     return df
 
 def get_stock_info(code):
@@ -149,7 +153,7 @@ def main(argv=sys.argv):
                 ["特种钢","矿物制品","普钢"],
                 ["火力发电","新型电力","水利发电"],
                 ["家用电器","电器仪表","化工原料"],
-                #["医药商业","医疗保健","超市连锁"],
+                ["医药商业","医疗保健","超市连锁"],
                 ["全国地产","区域地产"],
                 ["证券", "保险"]]
     if(len(industry)<1):
@@ -168,14 +172,13 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=21, minute=54)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=21, minute=46)
     scheduler.start()
     #sys.exit(main())
 
 #print(res.head(2))
 #res_json=get_stock_info("002027")
-#print(res_json)
-#tmp=pd.DataFrame(res_json,index=[0])
+#print(res_json=-`  `=pd.DataFrame(res_json,index=[0])
 #print(tmp.head(2))
 
 
