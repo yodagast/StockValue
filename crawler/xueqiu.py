@@ -172,7 +172,7 @@ def main(argv=sys.argv):
 
 if __name__ == "__main__":
     scheduler=BlockingScheduler()
-    scheduler.add_job(main,'cron', day_of_week='0-6', hour=20, minute=58)
+    scheduler.add_job(main,'cron', day_of_week='0-6', hour=17, minute=59)
     scheduler.start()
     #sys.exit(main())
 

@@ -153,7 +153,7 @@ def get_fund_info_qq(code):
             dict["最新规模"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[1].get_text()  # 最新规模
             dict["交易状态"] = soup.find("ul", {"class": "col_3"}).find_all("span", id=False)[2].get_text()  # 交易状态
         #print(dict["折溢价"]+"\t"+dict["开盘价"] +"\t"+dict["昨日收盘"]+"\t"+dict["最高价"] +"\t"+dict["日期"],end="\t" )
-        print(dict)
+        #print(dict)
         #for soup in BeautifulSoup(result, 'html.parser').find("div",{"class":"type4"}).select("div",{"class":"col_3"}):
          #   print(soup.get_text())
             #dict["净值增长率"]=soup.find_all("tr")[1].get_text()
@@ -202,6 +202,7 @@ def main_qq():
             continue
         print(row["id"] + "\t" + row["name"] + "\t" + str(row["StructuredFund"]), end="\t")
         dict = get_fund_info_qq(row["id"])
+        dict["name"]=row["name"]
         print(dict)
         #cnt=cnt+1
         #if(cnt>5):break
