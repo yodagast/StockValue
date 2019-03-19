@@ -45,8 +45,8 @@ def get_huge_exchage(code_list=None,date=None):
 
 
 def mychoice():
-    yiyao_list = ["600062", "600867", "601607", "000999"]
-    list = yiyao_list
+    medicine_list = ["600062", "600867", "601607", "000999"]
+    list = medicine_list
     return list
 
 
@@ -85,8 +85,10 @@ def main():
                # ["全国地产", "区域地产"],
                 ["证券", "保险"]]
     flatten = lambda l: [item for sublist in l for item in sublist]
-    list=get_codelist(flatten(industry))
-    df=get_huge_exchage(list)
+    mylist = get_codelist(flatten(industry))
+    mylist=mychoice()
+    logger.info(mylist)
+    df=get_huge_exchage(mylist)
     df.to_csv("../data/{}-huge-exchage.csv".format(date),index=False)
 
 main()
