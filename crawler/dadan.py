@@ -6,10 +6,12 @@ from bs4 import BeautifulSoup
 from random import randint
 import pandas as pd
 import tushare as ts
-import sys,getopt,time,json,requests,urllib,os,platform
+import sys,getopt,time,json,requests,urllib,os,platform,logging
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 def get_code_list():
-    return ["600036","600585","600028","601939","600308","159938"]
+    return ["600062", "600867", "601607", "000999"]
 def get_huge_sale(code,date=None):
     date = time.strftime("%Y-%m-%d", time.localtime())
     d=time.strftime("%Y:%m:%d", time.localtime())
@@ -24,8 +26,13 @@ def get_huge_exchage(code_list=None,date=None):
     date = time.strftime("%Y-%m-%d", time.localtime())
     df=pd.DataFrame()
     for code in code_list:
-        tmp=ts.get_sina_dd(code,vol=500,date=date)
+        tmp=ts.get_sina_dd(code,vol=100,date=date)
+        if(isinstance(tmp,type(None))):
+            logger.error("processsing code {0},dd shape is 0".format(code))
+        else:
+            logger.info("processsing code {0},dd shape is {1}".format(code,tmp.shape))
         df=df.append(tmp,ignore_index=True)
+    print(df.columns)
     df["code"]=df["code"].apply(str)
     df["name"]=df["name"].apply(str)
     df["type"]=df["type"].apply(str)
@@ -38,7 +45,7 @@ def get_huge_exchage(code_list=None,date=None):
 
 
 def mychoice():
-    yiyao_list = ["600062", "600079", "600196", "600056", "603579", "000423", "600216", "600867", "601607", "000999"]
+    yiyao_list = ["600062", "600867", "601607", "000999"]
     list = yiyao_list
     return list
 
@@ -62,25 +69,24 @@ def get_codelist(industry="银行"):
             res.extend(tmp_list)
     return res
 
-
 def main():
     date = time.strftime("%Y-%m-%d", time.localtime())
-    industry = [["银行", ],
-                ["化学制药", "生物制药", "中成药"],
-                ["汽车配件", "汽车整车", "纺织机械"],
+    industry = [#["银行", ],
+                #["化学制药", "生物制药", "中成药"],
+                #["汽车配件", "汽车整车", "纺织机械"],
                 ["造纸", "水泥", "空运"],
-                ["建筑施工", "环境保护", ],
-                ["白酒", "乳制品"],
-                ["煤炭开采", "石油加工", "石油开采"],
-                ["特种钢", "矿物制品", "普钢"],
-                ["火力发电", "新型电力", "水利发电"],
-                ["家用电器", "电器仪表", "化工原料"],
-                ["医药商业", "医疗保健", "超市连锁"],
-                ["全国地产", "区域地产"],
+               # ["建筑施工", "环境保护", ],
+                #["白酒", "乳制品"],
+                #["煤炭开采", "石油加工", "石油开采"],
+                #["特种钢", "矿物制品", "普钢"],
+               # ["火力发电", "新型电力", "水利发电"],
+                #["家用电器", "电器仪表", "化工原料"],
+               # ["医药商业", "医疗保健", "超市连锁"],
+               # ["全国地产", "区域地产"],
                 ["证券", "保险"]]
-    list=get_codelist()
+    flatten = lambda l: [item for sublist in l for item in sublist]
+    list=get_codelist(flatten(industry))
     df=get_huge_exchage(list)
-    df.to_csv("../data/{}/huge-exchage.csv".format(date),index=False)
-
+    df.to_csv("../data/{}-huge-exchage.csv".format(date),index=False)
 
 main()
