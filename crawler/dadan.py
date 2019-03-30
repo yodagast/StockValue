@@ -1,6 +1,6 @@
 from urllib.request import Request, urlopen
 from apscheduler.schedulers.blocking import BlockingScheduler
-from datetime import datetime
+from datetime import datetime,timedelta,date
 
 from bs4 import BeautifulSoup
 from random import randint
@@ -23,7 +23,8 @@ def get_huge_sale(code,date=None):
 def get_huge_exchage(code_list=None,date=None):
     if(code_list==None):
         code_list=get_code_list()
-    date = time.strftime("%Y-%m-%d", time.localtime())
+    if(date==None):
+        date = time.strftime("%Y-%m-%d", time.localtime())
     df=pd.DataFrame()
     for code in code_list:
         tmp=ts.get_sina_dd(code,vol=100,date=date)
@@ -45,7 +46,7 @@ def get_huge_exchage(code_list=None,date=None):
 
 
 def mychoice():
-    medicine_list = ["600062", "600867", "601607", "000999"]
+    medicine_list = ["600062", "600867", "601607", "000999","002294","002275"]
     list = medicine_list
     return list
 
@@ -70,7 +71,6 @@ def get_codelist(industry="银行"):
     return res
 
 def main():
-    date = time.strftime("%Y-%m-%d", time.localtime())
     industry = [#["银行", ],
                 #["化学制药", "生物制药", "中成药"],
                 #["汽车配件", "汽车整车", "纺织机械"],
@@ -85,10 +85,14 @@ def main():
                # ["全国地产", "区域地产"],
                 ["证券", "保险"]]
     flatten = lambda l: [item for sublist in l for item in sublist]
-    mylist = get_codelist(flatten(industry))
-    mylist=mychoice()
+    yesterday=datetime.now() - timedelta(1)
+    date=yesterday.strftime("%Y-%m-%d")
+    #date = time.strftime("%Y-%m-%d", time.localtime())
+    if(isinstance(industry[0],list)):
+        mylist = get_codelist(flatten(industry))
+    #mylist=mychoice()
     logger.info(mylist)
-    df=get_huge_exchage(mylist)
+    df=get_huge_exchage(mylist,date)
     df.to_csv("../data/{}-huge-exchage.csv".format(date),index=False)
 
 main()
