@@ -8,6 +8,7 @@ import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os,platform,logging
 from util import get_codelist
+from util import get_list
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -20,7 +21,10 @@ def get_stock_feature(date,ts_code='600036.SH'):
                      fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
     df_flow=pro.moneyflow(ts_code=ts_code,start_date=date, end_date=date)
     df_daily= pro.daily(ts_code=ts_code, start_date=date, end_date=date)
-    df=pd.concat([df_basic, df_flow,df_daily], axis=1)
+    flow_cols =df_flow.columns.difference(df_flow.columns)
+    df=pd.merge(df_basic, df_flow[flow_cols],left_index=True, right_index=True, how='outer')
+    daily_cols = df_daily.columns.difference(df.columns)
+    df=pd.merge(df_basic, df_daily[daily_cols],left_index=True, right_index=True, how='outer')
     logger.info("{0} {1} get turnover {2}".format(date,ts_code,df["turnover_rate_f"][0]))
     #logger.info("{0} {1} get turnover {2}".format(date, ts_code, df_daily.to_dict()))
     #logger.info("{0} {1} get turnover {2}".format(date, ts_code, df_flow.to_dict()))
@@ -53,13 +57,16 @@ industry = [#["银行", ],
                # ["医药商业", "医疗保健", "超市连锁"],
                # ["全国地产", "区域地产"],
                 ["证券", "保险"]]
-flatten = lambda l: [item for sublist in l for item in sublist]
+flatten_list = lambda l: [item for sublist in l for item in sublist]
 def is_SH(x):
     if(str(x).startswith("6")):
         return x+".SH"
     else:
         return x+".SZ"
 if(isinstance(industry[0],list)):
-    mylist = get_codelist(flatten(industry))
+    mylist = get_codelist(flatten_list(industry))
     mylist=list(map(is_SH,mylist))
-get_daily_feature(yesterday,mylist)
+mylist=get_list()
+mylist=list(map(is_SH,mylist))
+df=get_daily_feature(yesterday,mylist)
+df.to_csv("../data/{0}-turnover.csv".format(yesterday ), sep="\t", index=False)

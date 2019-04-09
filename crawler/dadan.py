@@ -27,7 +27,7 @@ def get_huge_exchage(code_list=None,date=None):
         date = time.strftime("%Y-%m-%d", time.localtime())
     df=pd.DataFrame()
     for code in code_list:
-        tmp=ts.get_sina_dd(code,vol=100,date=date)
+        tmp=ts.get_sina_dd(code,vol=10,date=date)
         if(isinstance(tmp,type(None))):
             logger.error("processsing code {0},dd shape is 0".format(code))
         else:

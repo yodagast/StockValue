@@ -12,10 +12,15 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
 logger = logging.getLogger(__name__)
 
 def is_SH(x):
+    '''
+    :param x:给定6位代码，返回代码.SZ/SH
+    :return:
+    '''
     if(str(x).startswith("6")):
         return x+".SH"
     else:
         return x+".SZ"
+
 def get_codelist(self, industry="银行"):
     '''
         给定行业类型，获取所有该行业的公司股票代码
@@ -34,9 +39,23 @@ def get_codelist(self, industry="银行"):
             tmp_list = tmp.index.tolist()
             res.extend(tmp_list)
     return res
+
+def get_codename(ts_code):
+    '''
+    :param ts_code:给定股票代码，返回股票名称
+    :return:
+    '''
+    pro = ts.pro_api()
+    df = pro.namechange(ts_code=ts_code, fields='ts_code,name,start_date,end_date,change_reason')
+    return df["name"][0]
+
+def get_list():
+    my_list=["600585","600036","600660","600026","600062",
+             "600308","600703","601288","601939","002294","002310"]
+    return my_list
 class Version(object):
     @staticmethod
-    def get_codelist(self,industry="银行"):
+    def get_codelist(industry="银行"):
         '''
             给定行业类型，获取所有该行业的公司股票代码
             :param industry: string or list
@@ -54,4 +73,5 @@ class Version(object):
                 tmp_list = tmp.index.tolist()
                 res.extend(tmp_list)
         return res
+
 
