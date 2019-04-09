@@ -7,29 +7,59 @@ from random import randint
 import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os,platform,logging
+from util import get_codelist
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 pro=ts.pro_api('ec128793ed40d17b0654785138fd519fc1f1ffede1e89e5701f752ed')
-df = pro.daily_basic(ts_code='600036.SH', trade_date='20190404',
-                     fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
+#df = pro.daily_basic(ts_code='600036.SH', trade_date='20190404',
+#                     fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
 
 def get_stock_feature(date,ts_code='600036.SH'):
-    df_basic=pro.daily_basic(ts_code=ts_code, trade_date=date,
+    df_basic=pro.daily_basic(ts_code=ts_code, start_date=date, end_date=date,
                      fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
     df_flow=pro.moneyflow(ts_code=ts_code,start_date=date, end_date=date)
     df_daily= pro.daily(ts_code=ts_code, start_date=date, end_date=date)
-    return pd.concat([df_basic, df_flow,df_daily], axis=1)
+    df=pd.concat([df_basic, df_flow,df_daily], axis=1)
+    logger.info("{0} {1} get turnover {2}".format(date,ts_code,df["turnover_rate_f"][0]))
+    #logger.info("{0} {1} get turnover {2}".format(date, ts_code, df_daily.to_dict()))
+    #logger.info("{0} {1} get turnover {2}".format(date, ts_code, df_flow.to_dict()))
+    return df
 
 
-def get_daily_feature(date="",ts_code=""):
+def get_daily_feature(date,ts_code=""):
     res=pd.DataFrame()
     if(isinstance(ts_code,str)):
         res=get_stock_feature(date,ts_code)
     elif(isinstance(ts_code,list)):
         for code in ts_code:
-            tmp=get_stock_feature(date,ts_code)
+            tmp=get_stock_feature(date,code)
             res = res.append(tmp, ignore_index=True)
     return res
 
-
-print(df)
+yesterday=datetime.now() - timedelta(1)
+yesterday=yesterday.strftime("%Y%m%d")
+today = time.strftime("%Y%m%d", time.localtime())
+industry = [#["银行", ],
+                #["化学制药", "生物制药", "中成药"],
+                #["汽车配件", "汽车整车", "纺织机械"],
+                ["造纸", "水泥", "空运"],
+               # ["建筑施工", "环境保护", ],
+                #["白酒", "乳制品"],
+                #["煤炭开采", "石油加工", "石油开采"],
+                #["特种钢", "矿物制品", "普钢"],
+               # ["火力发电", "新型电力", "水利发电"],
+                #["家用电器", "电器仪表", "化工原料"],
+               # ["医药商业", "医疗保健", "超市连锁"],
+               # ["全国地产", "区域地产"],
+                ["证券", "保险"]]
+flatten = lambda l: [item for sublist in l for item in sublist]
+def is_SH(x):
+    if(str(x).startswith("6")):
+        return x+".SH"
+    else:
+        return x+".SZ"
+if(isinstance(industry[0],list)):
+    mylist = get_codelist(flatten(industry))
+    mylist=list(map(is_SH,mylist))
+get_daily_feature(yesterday,mylist)
