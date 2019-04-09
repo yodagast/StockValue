@@ -21,7 +21,7 @@ def is_SH(x):
     else:
         return x+".SZ"
 
-def get_codelist(self, industry="银行"):
+def get_codelist( industry="银行"):
     '''
         给定行业类型，获取所有该行业的公司股票代码
         :param industry: string or list
@@ -38,9 +38,10 @@ def get_codelist(self, industry="银行"):
             tmp = df[["name", "industry", "pe", "pb", ]][(df.industry == ind)]
             tmp_list = tmp.index.tolist()
             res.extend(tmp_list)
+    res=list(map(is_SH,res))
     return res
 
-def get_codename(ts_code):
+def get_codeName(ts_code):
     '''
     :param ts_code:给定股票代码，返回股票名称
     :return:

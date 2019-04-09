@@ -67,6 +67,6 @@ if(isinstance(industry[0],list)):
     mylist = get_codelist(flatten_list(industry))
     mylist=list(map(is_SH,mylist))
 mylist=get_list()
-mylist=list(map(is_SH,mylist))
+#mylist=list(map(is_SH,mylist))
 df=get_daily_feature(yesterday,mylist)
 df.to_csv("../data/{0}-turnover.csv".format(yesterday ), sep="\t", index=False)
