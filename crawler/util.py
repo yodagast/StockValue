@@ -53,6 +53,7 @@ def get_codeName(ts_code):
 def get_list():
     my_list=["600585","600036","600660","600026","600062",
              "600308","600703","601288","601939","002294","002310"]
+    candidate=["600703","002310","002008","002001","600104"]
     return my_list
 class Version(object):
     @staticmethod
