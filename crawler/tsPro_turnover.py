@@ -8,9 +8,9 @@ import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os,platform,logging
 from util import get_codelist
-from util import get_list
+from util import *
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format=' %(message)s ')
 logger = logging.getLogger(__name__)
 pro=ts.pro_api('ec128793ed40d17b0654785138fd519fc1f1ffede1e89e5701f752ed')
 #df = pro.daily_basic(ts_code='600036.SH', trade_date='20190404',
@@ -28,10 +28,12 @@ def get_stock_feature(date,ts_code='600036.SH'):
     df["amp"]=round((df["high"]-df["low"])/df["pre_close"],3)
     df["tomorrow_high"]=round((df["amp"]/2+1)*df["close"],4)
     df["tomorrow_low"]=round((1-df["amp"]/2)*df["close"],4)
-    logger.info("{1}:next-high-low:{4}-{5},close:{6},turnover_rate(f):{2},amplitude:{3}".
-                format(date,ts_code,df["turnover_rate_f"][0],df["amp"][0],df["tomorrow_high"][0],df["tomorrow_low"][0],df["close"][0]))
-    #logger.info("{0} {1} get turnover {2}".format(date, ts_code, df_daily.to_dict()))
-    #logger.info("{0} {1} get turnover {2}".format(date, ts_code, df_flow.to_dict()))
+    df["name"]=get_codeName(ts_code)
+    tmp=df[["tomorrow_high","tomorrow_low","close","name","ts_code","turnover_rate_f","amp"]]
+    mydict={c:tmp[c][0] for c in tmp.columns}
+    #logger.info("{1}:next-high-low:{4}-{5},close:{6},turnover_rate(f):{2},amplitude:{3}".
+    #            format(date,ts_code,df["turnover_rate_f"][0],df["amp"][0],df["tomorrow_high"][0],df["tomorrow_low"][0],df["close"][0]))
+    logger.info("{0}-{1}".format(date,mydict))
     return df
 
 
@@ -62,11 +64,6 @@ industry = [#["银行", ],
                # ["全国地产", "区域地产"],
                 ["证券", "保险"]]
 flatten_list = lambda l: [item for sublist in l for item in sublist]
-def is_SH(x):
-    if(str(x).startswith("6")):
-        return x+".SH"
-    else:
-        return x+".SZ"
 if(isinstance(industry[0],list)):
     mylist = get_codelist(flatten_list(industry))
     mylist=list(map(is_SH,mylist))
