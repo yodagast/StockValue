@@ -3,3 +3,4 @@
 data/*
 fund/*
 stock/*
+crawler/__*
