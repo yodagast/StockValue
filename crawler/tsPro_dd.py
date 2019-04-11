@@ -23,11 +23,11 @@ def get_recent_date():
 
 def get_moneyflow(ts_code):
     df=pro.moneyflow(ts_code=ts_code,trade_date=get_recent_date())
-    df["buy_vol"]=df["buy_md_vol"]+df["buy_lg_vol"]+df["buy_elg_vol"]#df["buy_sm_vol"]+
-    df["buy_amount"]=df["buy_md_amount"]+df["buy_lg_amount"]+df["buy_elg_amount"]#df["buy_sm_amount"]+
-    df["sell_vol"]=df["sell_md_vol"]+df["sell_lg_vol"]+df["sell_elg_vol"]#df["sell_sm_vol"]+
-    df["sell_amount"]=df["sell_md_amount"]+df["sell_lg_amount"]+df["sell_elg_amount"]#df["sell_sm_amount"]+
-    return df[["buy_vol","sell_vol","net_mf_vol","net_mf_amount"]]
+    df["dd_buy_vol"]=df["buy_md_vol"]+df["buy_lg_vol"]+df["buy_elg_vol"]#df["buy_sm_vol"]+
+    df["dd_buy_amount"]=df["buy_md_amount"]+df["buy_lg_amount"]+df["buy_elg_amount"]#df["buy_sm_amount"]+
+    df["dd_sell_vol"]=df["sell_md_vol"]+df["sell_lg_vol"]+df["sell_elg_vol"]#df["sell_sm_vol"]+
+    df["dd_sell_amount"]=df["sell_md_amount"]+df["sell_lg_amount"]+df["sell_elg_amount"]#df["sell_sm_amount"]+
+    return df[["dd_buy_vol","dd_sell_vol","net_mf_vol","net_mf_amount"]]
 
 for code in get_list():
     df=get_moneyflow(is_SH(code))

@@ -52,9 +52,10 @@ def get_codeName(ts_code):
     return df["name"][0]
 
 def get_list():
-    my_list=["600585","600036","600660","000002","600062","600867","600337",
+    my_list=["600585","600036","600660","000002","600062","600867","603337",
              "600308","600703","601288","601939","002294","002310"]
-    candidate=["600703","002624","002008","002001","600104","000826","000501"]
+    candidate=["600703","002624","002008","002001","600104","000826",
+               "000538","000338","000501"]
     my_list.extend(candidate)
     return my_list
 
@@ -66,6 +67,12 @@ def get_lastyear_date(today=None,lastyear=365):
         yesterday = today - timedelta(days=i)
         my_days.append(yesterday.strftime("%Y%m%d"))
     return my_days
+
+def get_recent_date():
+    today = datetime.now()
+    if (today.hour < 19):
+        today = today - timedelta(1)
+    return today.strftime("%Y%m%d")
 
 def get_cal_date(start_date=None,end_date=None,during=365):
     if(end_date==None):
