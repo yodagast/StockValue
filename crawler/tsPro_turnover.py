@@ -27,8 +27,8 @@ def get_stock_feature(date,ts_code='600036.SH'):
     daily_cols = df_daily.columns.difference(df.columns)
     df=pd.merge(df_basic, df_daily[daily_cols],left_index=True, right_index=True, how='outer')
     df["amp"]=round((df["high"]-df["low"])/df["pre_close"],3)
-    df["tomorrow_high"]=round((df["amp"]/2+1)*df["close"],4)
-    df["tomorrow_low"]=round((1-df["amp"]/2)*df["close"],4)
+    df["tomorrow_high"]=round((df["amp"]+1)*df["close"],4)
+    df["tomorrow_low"]=round((1-df["amp"])*df["close"],4)
     df["name"]=get_codeName(ts_code)
     tmp=df[["tomorrow_high","tomorrow_low","close","name","pe_ttm","turnover_rate_f","amp"]]
     mydict={c:tmp[c][0] for c in tmp.columns}

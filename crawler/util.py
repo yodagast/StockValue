@@ -1,6 +1,7 @@
 from urllib.request import Request, urlopen
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime,timedelta,date
+from dateutil.relativedelta import relativedelta
 
 from bs4 import BeautifulSoup
 from random import randint
@@ -51,11 +52,38 @@ def get_codeName(ts_code):
     return df["name"][0]
 
 def get_list():
-    my_list=["600585","600036","600660","600026","600062",
+    my_list=["600585","600036","600660","000002","600062","600867","600337",
              "600308","600703","601288","601939","002294","002310"]
     candidate=["600703","002624","002008","002001","600104","000826","000501"]
     my_list.extend(candidate)
     return my_list
+
+def get_lastyear_date(today=None,lastyear=365):
+    if(today==None):
+        today = date.today()
+    my_days=[]
+    for i in range(lastyear,0,-1):
+        yesterday = today - timedelta(days=i)
+        my_days.append(yesterday.strftime("%Y%m%d"))
+    return my_days
+
+def get_cal_date(start_date=None,end_date=None,during=365):
+    if(end_date==None):
+        end_date=date.today()
+    if(start_date==None):
+        #start_date=end_date+relativedelta(months=-12)
+        start_date=end_date- timedelta(days=during)
+        end_date = end_date.strftime("%Y%m%d")
+        start_date = start_date.strftime("%Y%m%d")
+    pro = ts.pro_api()
+    df=pro.trade_cal(start_date=start_date,end_date=end_date)
+    #df[["exchange", "cal_date"]][df["is_open"] == 1]
+    return  df[ "cal_date"][df["is_open"] == 1].to_list()
+
+
+
+
+
 class Version(object):
     @staticmethod
     def get_codelist(industry="银行"):
