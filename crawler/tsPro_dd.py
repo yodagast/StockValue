@@ -16,10 +16,10 @@ df=pro.query('stock_basic', exchange='',is_hs='H',
 print(df.shape)
 
 def get_recent_date():
-    yesterday = datetime.now() - timedelta(1)
-    yesterday = yesterday.strftime("%Y%m%d")
-    today = time.strftime("%Y%m%d", time.localtime())
-    return yesterday
+    today = datetime.now()
+    if (today.hour < 19):
+        today = today - timedelta(1)
+    return today.strftime("%Y%m%d")
 
 def get_moneyflow(ts_code):
     df=pro.moneyflow(ts_code=ts_code,trade_date=get_recent_date())
@@ -31,5 +31,6 @@ def get_moneyflow(ts_code):
 
 for code in get_list():
     df=get_moneyflow(is_SH(code))
-    logger.info("{0} dd : {2}".format(is_SH(code),df.shape,df.values.tolist()))
+    mydict = {c: df[c][0] for c in df.columns}
+    logger.info("{0} dd : {1}".format(get_codeName(is_SH(code)),mydict))
 

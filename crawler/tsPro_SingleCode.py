@@ -14,8 +14,10 @@ logger = logging.getLogger(__name__)
 pro=ts.pro_api('ec128793ed40d17b0654785138fd519fc1f1ffede1e89e5701f752ed')
 def main():
     dates=get_cal_date()
-    yesterday = datetime.now() - timedelta(1)
-    end_date = yesterday.strftime("%Y%m%d")
+    today = datetime.now()
+    if(today.hour<19):
+        today = today - timedelta(1)
+    end_date = today.strftime("%Y%m%d")
     last_year= datetime.now() - timedelta(365)
     start_date = last_year.strftime("%Y%m%d")
     codes=list(map(is_SH,get_list()))

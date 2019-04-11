@@ -49,9 +49,12 @@ def get_daily_feature(date,ts_code="600036.SH"):
     return res
 
 def main():
-    yesterday = datetime.now() - timedelta(1)
-    yesterday = yesterday.strftime("%Y%m%d")
-    today = time.strftime("%Y%m%d", time.localtime())
+    #yesterday = datetime.now() - timedelta(1)
+    #yesterday = yesterday.strftime("%Y%m%d")
+    today = datetime.now()
+    if (today.hour < 19):
+        today = today - timedelta(1)
+    today=today.strftime("%Y%m%d")
     industry = [  # ["银行", ],
         # ["化学制药", "生物制药", "中成药"],
         # ["汽车配件", "汽车整车", "纺织机械"],
@@ -71,11 +74,11 @@ def main():
         if (str(full_list[0]).find("S") < 0):
             full_list = list(map(is_SH, full_list))
     mylist = list(map(is_SH, get_list()))
-    df = get_daily_feature(yesterday, mylist)
+    df = get_daily_feature(today, mylist)
     if (os.path.exists("../stock") == False):
         os.mkdir("../stock")
-    df.to_csv("../stock/{0}-mystock.csv".format(yesterday), sep="\t", index=False)
-    df = get_daily_feature(yesterday, full_list)
-    df.to_csv("../stock/{0}-full-stock.csv".format(yesterday), sep="\t", index=False)
+    df.to_csv("../stock/{0}-mystock.csv".format(today), sep="\t", index=False)
+    df = get_daily_feature(today, full_list)
+    df.to_csv("../stock/{0}-full-stock.csv".format(today), sep="\t", index=False)
 
 main()
