@@ -63,7 +63,7 @@ def get_codeName(ts_code):
     :param ts_code:给定股票代码，返回股票名称
     :return:
     '''
-    logger.info("processing ts_code {0}", ts_code)
+    logger.info("{0}".format(ts_code))
     pro = ts.pro_api()
     df = pro.namechange(ts_code=ts_code, fields='ts_code,name,start_date,end_date,change_reason')
     if(df.shape[1]>0):
