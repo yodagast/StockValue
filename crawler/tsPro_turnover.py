@@ -73,12 +73,12 @@ def main():
         full_list = get_codelist(flatten_list(industry))
         if (str(full_list[0]).find("S") < 0):
             full_list = list(map(is_SH, full_list))
-    mylist = list(map(is_SH, get_list()))
+    mylist = get_ts_codes()
     df = get_daily_feature(today, mylist)
     if (os.path.exists("../stock") == False):
         os.mkdir("../stock")
-    df.to_csv("../stock/{0}-mystock.csv".format(today), sep="\t", index=False)
+    df.to_csv("../stock/{0}-myturnover.csv".format(today), sep="\t", index=False)
     df = get_daily_feature(today, full_list)
-    df.to_csv("../stock/{0}-full-stock.csv".format(today), sep="\t", index=False)
+    df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
 
 main()

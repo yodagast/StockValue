@@ -21,7 +21,23 @@ def is_SH(x):
         return x+".SH"
     else:
         return x+".SZ"
-
+def get_full_ts_codes():
+    industry = [  # ["银行", ],
+        # ["化学制药", "生物制药", "中成药"],
+         ["汽车配件", "汽车整车", "纺织机械"],
+        ["造纸", "水泥", "空运"],
+        # ["建筑施工", "环境保护", ],
+        # ["白酒", "乳制品"],
+        # ["煤炭开采", "石油加工", "石油开采"],
+        # ["特种钢", "矿物制品", "普钢"],
+        # ["火力发电", "新型电力", "水利发电"],
+        # ["家用电器", "电器仪表", "化工原料"],
+        # ["医药商业", "医疗保健", "超市连锁"],
+        # ["全国地产", "区域地产"],
+        ["证券", "保险"]]
+    flatten_list = lambda l: [item for sublist in l for item in sublist]
+    codes = get_codelist(flatten_list(industry))
+    return codes
 def get_codelist( industry="银行"):
     '''
         给定行业类型，获取所有该行业的公司股票代码
@@ -47,17 +63,21 @@ def get_codeName(ts_code):
     :param ts_code:给定股票代码，返回股票名称
     :return:
     '''
+    logger.info("processing ts_code {0}", ts_code)
     pro = ts.pro_api()
     df = pro.namechange(ts_code=ts_code, fields='ts_code,name,start_date,end_date,change_reason')
-    return df["name"][0]
+    if(df.shape[1]>0):
+        return df["name"][0]
+    else:
+        return "ERROR"
 
-def get_list():
+def get_ts_codes():
     my_list=["600585","600036","600660","000002","600062","600867","603337",
              "600308","600703","601288","601939","002294","002310"]
     candidate=["600703","002624","002008","002001","600104","000826",
                "000538","000338","000501"]
     my_list.extend(candidate)
-    return my_list
+    return list(map(is_SH,my_list))
 
 def get_lastyear_date(today=None,lastyear=365):
     if(today==None):
