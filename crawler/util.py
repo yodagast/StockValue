@@ -64,13 +64,15 @@ def get_codeName(ts_code):
     :param ts_code:给定股票代码，返回股票名称
     :return:
     '''
-    logger.info("{0}".format(ts_code))
     pro = ts.pro_api()
     df = pro.namechange(ts_code=ts_code, fields='ts_code,name,start_date,end_date,change_reason')
     if(df.shape[1]>0):
-        return df["name"][0]
+        res= df["name"][0]
     else:
-        return "ERROR"
+        res= "ERROR"
+
+    logger.info("get code {0} name: {1}".format(ts_code,res))
+    return res
 
 def get_ts_codes(isPro=True):
     my_list=["600585","600036","600660","000002","600062","600867","603337",
@@ -116,6 +118,14 @@ def get_cal_date(start_date=None,end_date=None,during=365,isPro=True):
     df=pro.trade_cal(start_date=start_date,end_date=end_date)
     #df[["exchange", "cal_date"]][df["is_open"] == 1]
     return  df[ "cal_date"][df["is_open"] == 1].to_list()
+
+def is_cal_date(date=None):
+    pro = ts.pro_api()
+    df = pro.trade_cal(start_date=date, end_date=date)
+    if( df.empty | df["is_open"][0] == 0):
+        return False
+    return True
+
 
 
 

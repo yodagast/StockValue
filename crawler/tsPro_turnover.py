@@ -17,7 +17,7 @@ pro=ts.pro_api('ec128793ed40d17b0654785138fd519fc1f1ffede1e89e5701f752ed')
 #                     fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
 
 def get_stock_feature(date,ts_code='600036.SH'):
-    logger.info("prepare to caculate {0}:".format(ts_code))
+    logger.info("prepare to caculate {0} on {1}".format(ts_code,date))
     df_basic=pro.daily_basic(ts_code=ts_code, start_date=date, end_date=date,
                      fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
     df_flow=pro.moneyflow(ts_code=ts_code,start_date=date, end_date=date)
@@ -31,10 +31,13 @@ def get_stock_feature(date,ts_code='600036.SH'):
     df["tomorrow_low"]=round((1-df["amp"])*df["close"],4)
     df["name"]=get_codeName(ts_code)
     tmp=df[["tomorrow_high","tomorrow_low","close","name","pe_ttm","turnover_rate_f","amp"]]
-    mydict={c:tmp[c][0] for c in tmp.columns}
+    if(tmp.empty==False):
+        mydict={c:tmp[c][0] for c in tmp.columns}
     #logger.info("{1}:next-high-low:{4}-{5},close:{6},turnover_rate(f):{2},amplitude:{3}".
     #            format(date,ts_code,df["turnover_rate_f"][0],df["amp"][0],df["tomorrow_high"][0],df["tomorrow_low"][0],df["close"][0]))
-    logger.info("{0}-{1}".format(date,mydict))
+        logger.info("{0}-{1}".format(date,mydict))
+    else:
+        logger.error("Empty Dataframe")
     return tmp
 
 
@@ -52,8 +55,13 @@ def main():
     #yesterday = datetime.now() - timedelta(1)
     #yesterday = yesterday.strftime("%Y%m%d")
     today = datetime.now()
-    if (today.hour < 19):
+    if(today.hour < 19):
         today = today - timedelta(1)
+    while(is_cal_date(today.strftime("%Y%m%d"))==False):
+        today = today - timedelta(1)
+    print(today)
+    #today=today-timedelta(today.weekday()%4)
+    #today = today - timedelta(2)
     today=today.strftime("%Y%m%d")
     industry = [  # ["银行", ],
         # ["化学制药", "生物制药", "中成药"],
@@ -78,7 +86,7 @@ def main():
     if (os.path.exists("../stock") == False):
         os.mkdir("../stock")
     df.to_csv("../stock/{0}-myturnover.csv".format(today), sep="\t", index=False)
-    df = get_daily_feature(today, full_list)
-    df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
+    #df = get_daily_feature(today, full_list)
+    #df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
 
 main()
