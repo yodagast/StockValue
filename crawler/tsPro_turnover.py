@@ -22,7 +22,7 @@ def get_stock_feature(date,ts_code='600036.SH'):
                      fields='ts_code,trade_date,turnover_rate,turnover_rate_f,volume_ratio,pe_ttm,pb,ps_ttm')
     df_flow=pro.moneyflow(ts_code=ts_code,start_date=date, end_date=date)
     df_daily= pro.daily(ts_code=ts_code, start_date=date, end_date=date)
-    flow_cols =df_flow.columns.difference(df_flow.columns)
+    flow_cols =df_flow.columns.difference(df_basic.columns)
     df=pd.merge(df_basic, df_flow[flow_cols],left_index=True, right_index=True, how='outer')
     daily_cols = df_daily.columns.difference(df.columns)
     df=pd.merge(df, df_daily[daily_cols],left_index=True, right_index=True, how='outer')
@@ -33,8 +33,6 @@ def get_stock_feature(date,ts_code='600036.SH'):
     tmp=df[["tomorrow_high","tomorrow_low","close","name","pe_ttm","turnover_rate_f","amp"]]
     if(tmp.empty==False):
         mydict={c:tmp[c][0] for c in tmp.columns}
-    #logger.info("{1}:next-high-low:{4}-{5},close:{6},turnover_rate(f):{2},amplitude:{3}".
-    #            format(date,ts_code,df["turnover_rate_f"][0],df["amp"][0],df["tomorrow_high"][0],df["tomorrow_low"][0],df["close"][0]))
         logger.info("{0}-{1}".format(date,mydict))
     else:
         logger.error("Empty Dataframe")
@@ -59,9 +57,8 @@ def main():
         today = today - timedelta(1)
     while(is_cal_date(today.strftime("%Y%m%d"))==False):
         today = today - timedelta(1)
-    print(today)
-    #today=today-timedelta(today.weekday()%4)
-    #today = today - timedelta(2)
+    during=30
+    mydates=get_cal_date(start_date=today,during=during)
     today=today.strftime("%Y%m%d")
     industry = [  # ["银行", ],
         # ["化学制药", "生物制药", "中成药"],
@@ -86,7 +83,7 @@ def main():
     if (os.path.exists("../stock") == False):
         os.mkdir("../stock")
     df.to_csv("../stock/{0}-myturnover.csv".format(today), sep="\t", index=False)
-    #df = get_daily_feature(today, full_list)
-    #df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
+    df = get_daily_feature(today, full_list)
+    df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
 
 main()
