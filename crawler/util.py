@@ -77,7 +77,7 @@ def get_codeName(ts_code):
 def get_ts_codes(isPro=True):
     my_list=["600585","600036","600660","000002","600062","600867","603337",
              "600308","600703","601288","601939","002294","002310"]
-    candidate=["600703","002624","002008","002001","600104","000826",
+    candidate=["002624","002008","002001","600104","000826",
                "000538","000338","000501"]
     my_list.extend(candidate)
     if(isPro):
@@ -96,15 +96,17 @@ def get_lastyear_date(today=None,lastyear=365,isPro=True):
             my_days.append(yesterday.strftime("%Y-%m-%d"))
     return my_days
 
-def get_recent_date():
+def get_recent_date(isString=True):
     today = datetime.now()
     if (today.hour < 19):
         today = today - timedelta(1)
-    return today.strftime("%Y%m%d")
+    if(isString):
+        return today.strftime("%Y%m%d")
+    return today
 
 def get_cal_date(start_date=None,end_date=None,during=365,isPro=True):
-    if(end_date==None):
-        end_date=date.today()
+    if(end_date==None ):
+        end_date=get_recent_date(isString=False)
     if(start_date==None):
         #start_date=end_date+relativedelta(months=-12)
         start_date=end_date- timedelta(days=during)

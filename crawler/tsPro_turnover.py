@@ -30,7 +30,8 @@ def get_stock_feature(date,ts_code='600036.SH'):
     df["tomorrow_high"]=round((df["amp"]+1)*df["close"],4)
     df["tomorrow_low"]=round((1-df["amp"])*df["close"],4)
     df["name"]=get_codeName(ts_code)
-    tmp=df[["tomorrow_high","tomorrow_low","close","name","pe_ttm","turnover_rate_f","amp"]]
+    df["date"]=date
+    tmp=df[["tomorrow_high","tomorrow_low","close","date","name","pe_ttm","turnover_rate_f","amp"]]
     if(tmp.empty==False):
         mydict={c:tmp[c][0] for c in tmp.columns}
         logger.info("{0}-{1}".format(date,mydict))
@@ -57,8 +58,9 @@ def main():
         today = today - timedelta(1)
     while(is_cal_date(today.strftime("%Y%m%d"))==False):
         today = today - timedelta(1)
-    during=30
-    mydates=get_cal_date(start_date=today,during=during)
+    during=15
+    mydates=get_cal_date(end_date=today,during=during)
+    print(mydates)
     today=today.strftime("%Y%m%d")
     industry = [  # ["银行", ],
         # ["化学制药", "生物制药", "中成药"],
@@ -78,12 +80,19 @@ def main():
         full_list = get_codelist(flatten_list(industry))
         if (str(full_list[0]).find("S") < 0):
             full_list = list(map(is_SH, full_list))
+    df = get_daily_feature(today, full_list)
+    df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
     mylist = get_ts_codes()
     df = get_daily_feature(today, mylist)
     if (os.path.exists("../stock") == False):
         os.mkdir("../stock")
-    df.to_csv("../stock/{0}-myturnover.csv".format(today), sep="\t", index=False)
-    df = get_daily_feature(today, full_list)
-    df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
+    df.to_csv("../stock/{0}-today-turnover.csv".format(today), sep="\t", index=False)
+    res=pd.DataFrame()
+    for date in mydates:
+        #print(date)
+        df = get_daily_feature(date, mylist)
+        res=res.append(df,ignore_index=True)
+    res.sort_values(by=["name","date"]).to_csv("../stock/{0}-{1}-turnover.csv".format(today,during), sep="\t", index=False)
+
 
 main()
