@@ -105,21 +105,23 @@ def get_recent_date(isString=True):
     return today
 
 def get_cal_date(start_date=None,end_date=None,during=365,isPro=True):
-    if(end_date==None ):
+    if(end_date==None):
         end_date=get_recent_date(isString=False)
     if(start_date==None):
         #start_date=end_date+relativedelta(months=-12)
         start_date=end_date- timedelta(days=during)
-    if(isPro==True):
-        end_date = end_date.strftime("%Y%m%d")
-        start_date = start_date.strftime("%Y%m%d")
-    else:
-        end_date = end_date.strftime("%Y-%m-%d")
-        start_date = start_date.strftime("%Y-%m-%d")
+    end_date = end_date.strftime("%Y%m%d")
+    start_date = start_date.strftime("%Y%m%d")
     pro = ts.pro_api()
     df=pro.trade_cal(start_date=start_date,end_date=end_date)
-    #df[["exchange", "cal_date"]][df["is_open"] == 1]
-    return  df[ "cal_date"][df["is_open"] == 1].to_list()
+    res=df[ "cal_date"][df["is_open"] == 1].to_list()
+    if(isPro==True):
+        return  res
+    def stringConverter(x):
+        tmp=time.strptime(x,"%Y%m%d")
+        return time.strftime("%Y-%m-%d",tmp)
+    return list(map(stringConverter,res))
+
 
 def is_cal_date(date=None):
     pro = ts.pro_api()
