@@ -32,7 +32,7 @@ def main():
         res=pd.DataFrame()
         for date in lastyear_dates:
             logger.info("processing {0} on date {1}".format(code,date))
-            df = ts.get_tick_data(code, date=date, src='tt')
+            df = ts.get_tick_data(code, date=date, src='sn')
             print(df.head(2))
             res=res.append(df,ignore_index=True)
             time.sleep(0.3)
@@ -41,6 +41,5 @@ def main():
         if(cnt>5):
             return
         res.to_csv("../ticks/{0}-ticks.csv".format(code), sep="\t", index=False)
-
 
 main()
