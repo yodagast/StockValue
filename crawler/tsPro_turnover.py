@@ -92,7 +92,7 @@ def main():
         #print(date)
         df = get_daily_feature(date, mylist)
         res=res.append(df,ignore_index=True)
-    res.sort_values(by=["name","date"]).to_csv("../stock/{0}-{1}-turnover.csv".format(today,during), sep="\t", index=False)
+    res.sort_values(by=["name","date"],ascending=[True,False]).to_csv("../stock/{0}-{1}-turnover.csv".format(today,during), sep="\t", index=False)
 
 
 main()
