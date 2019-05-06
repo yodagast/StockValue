@@ -31,7 +31,7 @@ def get_stock_feature(date,ts_code='600036.SH'):
     df["tomorrow_low"]=round((1-df["amp"])*df["close"],4)
     df["name"]=get_codeName(ts_code)
     df["date"]=date
-    tmp=df[["tomorrow_high","tomorrow_low","close","date","name","pe_ttm","turnover_rate_f","amp"]]
+    tmp=df[["tomorrow_high","tomorrow_low","close","date","name","pe_ttm","turnover_rate_f","amp","high","low"]]
     if(tmp.empty==False):
         mydict={c:tmp[c][0] for c in tmp.columns}
         logger.info("{0}-{1}".format(date,mydict))
@@ -58,7 +58,7 @@ def main():
         today = today - timedelta(1)
     while(is_cal_date(today.strftime("%Y%m%d"))==False):
         today = today - timedelta(1)
-    during=15
+    during=30
     mydates=get_cal_date(end_date=today,during=during)
     print(mydates)
     today=today.strftime("%Y%m%d")
