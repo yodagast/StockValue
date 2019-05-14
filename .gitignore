@@ -5,3 +5,4 @@ fund/*
 stock/*
 crawler/__*
 ticks/*
+unionpay/*

@@ -9,6 +9,12 @@ import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os,platform,logging
 
+import smtplib,os
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from smtplib import SMTP_SSL
+#from email.MIMEMultipart import MIMEMultipart
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 

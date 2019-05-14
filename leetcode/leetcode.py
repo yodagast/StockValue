@@ -8,12 +8,11 @@ class Solution:
             maxRadius=max(maxRadius,abs(heaters[i]-h))
         return maxRadius
 
-    def arrangeCoins(self, n: int):
+    def arrangeCoins(self, n):
         cnt,i=0,1
         while(cnt<n):
             cnt=cnt+1
             i+=1
         return i-1;
 
-    def findDisappearedNumbers(self, nums):
 
