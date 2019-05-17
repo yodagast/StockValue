@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date,datetime
 import logging
 
 import smtplib,os
@@ -6,18 +6,25 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from smtplib import SMTP_SSL
 #from email.MIMEMultipart import MIMEMultipart
+from util import *
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def attach_message(message ,date ,path=None):
+def attach_message(message ,date =None,path=None):
     # path="../ticks/"
     # path="/home/ywb/yhuang/"+today+"/"
+    if(date==None):
+        date=get_recent_date()
+    if(path==None):
+        path="../stock/"
     if (os.path.exists(path)):
         for root, dirs, files in os.walk(path):
             for name in files:
-                if(name.format(date ) <1):
+                if(name.find(date) <0):
+                    logger.info("file {} ingnored".format(name))
                     continue
+                logger.info("file {} attached".format(name))
                 dd =os.path.join(root, name)
                 logger.info(dd +"|||||||||||||| " +name)
                 try:
@@ -42,10 +49,10 @@ def send_multipart_mail(d):
         message = MIMEMultipart()
         message['From'] = d["sender"]
         message['To'] = d["receiver"]
-        message['Subject'] = '{0}-数据统计'.format(date.today().strftime("%Y%m%d"))
+        message['Subject'] = '{0}-每日数据统计'.format(date.today().strftime("%Y%m%d"))
         attach_message(message)
         smtpObj.sendmail(d["sender"], d["receiver"], message.as_string())
-        logger.info('success send email {}'.format())
+        logger.info('success send email ')
         smtpObj.quit()
     except smtplib.SMTPException:
         logger.error("error {}" ,smtplib.SMTPException)
@@ -58,3 +65,5 @@ def send_mail():
     d["sender"]="shellhys@qq.com"# "h  uangyong@unionpay.com"
     d["receiver"]="shellhys@qq.com"# "h  uangyong@unionpay.com"#"shellhys@qq.com"
     send_multipart_mail(d)
+
+send_mail()

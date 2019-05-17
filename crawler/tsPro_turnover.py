@@ -62,19 +62,21 @@ def main():
     mydates=get_cal_date(end_date=today,during=during)
     print(mydates)
     today=today.strftime("%Y%m%d")
-    industry = [  # ["银行", ],
-        # ["化学制药", "生物制药", "中成药"],
+    industry = [  ["银行", "保险"],
+         ["化学制药", "生物制药"],
         # ["汽车配件", "汽车整车", "纺织机械"],
-        ["造纸", "水泥", "空运"],
+        [ "煤炭开采", "石油加工", "石油开采"],
+        ["造纸", "水泥"],
         # ["建筑施工", "环境保护", ],
-        # ["白酒", "乳制品"],
+         ["白酒", "乳制品","超市连锁"],
         # ["煤炭开采", "石油加工", "石油开采"],
         # ["特种钢", "矿物制品", "普钢"],
         # ["火力发电", "新型电力", "水利发电"],
         # ["家用电器", "电器仪表", "化工原料"],
-        # ["医药商业", "医疗保健", "超市连锁"],
-        # ["全国地产", "区域地产"],
-        ["证券", "保险"]]
+        # ["医药商业", "医疗保健", ],
+         ["全国地产", "区域地产"],
+        #["证券", "保险"]
+                  ]
     flatten_list = lambda l: [item for sublist in l for item in sublist]
     if (isinstance(industry[0], list)):
         full_list = get_codelist(flatten_list(industry))
