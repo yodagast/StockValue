@@ -82,8 +82,9 @@ def main():
         full_list = get_codelist(flatten_list(industry))
         if (str(full_list[0]).find("S") < 0):
             full_list = list(map(is_SH, full_list))
-    df = get_daily_feature(today, full_list)
-    df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
+    # ## 计算所有的指标
+    #df = get_daily_feature(today, full_list)
+    #df.to_csv("../stock/{0}-fullturnover.csv".format(today), sep="\t", index=False)
     mylist = get_ts_codes()
     df = get_daily_feature(today, mylist)
     if (os.path.exists("../stock") == False):
