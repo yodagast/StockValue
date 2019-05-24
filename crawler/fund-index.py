@@ -18,9 +18,7 @@ def get_fund_basic(cols=["ts_code","name","issue_amount","invest_type"],amount=2
     cond=(df.delist_date.isnull()) #& (df.issue_amount>amount)
     if ((cols == None) | (len(cols) < 1)):
         cols = df.columns
-    if(isinstance(cols,str)):
-        cols=list(cols.split(","))
     df=df[cond][cols]
-    print(df.head())
+    return df
 
 get_fund_basic()
