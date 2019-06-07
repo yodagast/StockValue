@@ -15,7 +15,7 @@ df=pro.query('stock_basic', exchange='',is_hs='H',
              list_status='L', fields='ts_code,symbol,name,area,industry,list_date')
 print(df.shape)
 
-def get_recent_date():
+def git:
     today = datetime.now()
     if (today.hour < 19):
         today = today - timedelta(1)

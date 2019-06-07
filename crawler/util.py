@@ -116,7 +116,7 @@ def get_recent_date(isString=True):
         return today.strftime("%Y%m%d")
     return today
 
-def get_cal_date(start_date=None,end_date=None,during=365,isPro=True):
+def get_cal_date(start_date=None,end_date=None,during=60,isPro=True):
     if(end_date==None):
         end_date=get_recent_date(isString=False)
     if(start_date==None):
@@ -132,6 +132,7 @@ def get_cal_date(start_date=None,end_date=None,during=365,isPro=True):
     def stringConverter(x):
         tmp=time.strptime(x,"%Y%m%d")
         return time.strftime("%Y-%m-%d",tmp)
+    logger.info(res)
     return list(map(stringConverter,res))
 
 
