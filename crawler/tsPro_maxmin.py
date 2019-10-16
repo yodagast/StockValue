@@ -19,7 +19,6 @@ def get_week_maxmin(ts_code,start_date,end_date):
     :param end_date:
     :return:
     '''
-
     df = pro.weekly(ts_code=ts_code,start_date=start_date, end_date=end_date, fields='ts_code,trade_date,open,high,low,close,vol,amount')
     return df[["high","low"]].max(axis=0)
      #TODO

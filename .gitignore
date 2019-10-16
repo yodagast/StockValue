@@ -6,3 +6,5 @@ stock/*
 crawler/__*
 ticks/*
 unionpay/*
+crawler/pyspark-data-processor.py
+sync.sh
