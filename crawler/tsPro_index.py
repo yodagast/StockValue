@@ -13,9 +13,13 @@ def get_trade_vol(index_name,start_date,end_date):
     df= pro.index_daily(index_name, start_date, end_date)[["ts_code","vol","amount"]]
     df["amount"]=round(df["amount"]/100000,2)
     return df
-def get_trade_margin(start_date,end_date):
-    df = pro.margin("SSE",start_date,end_date)
-    df=df.append(pro.margin("SZSE",start_date,end_date),ignore_index=True)
+def get_trade_margin(exchange_id=None,start_date='20190901',end_date='20190910'):
+    df = pro.margin(exchange_id=exchange_id,start_date=start_date,end_date=end_date)
     df["margin_amount"]=round(df["rzrqye"]/100000000,2)
     return df
+if __name__ == '__main__':
+    start_date='20190901'
+    end_date='20190910'
+    df=get_trade_margin(exchange_id=None,start_date=start_date,end_date=end_date)
+    print(df.head())
 
