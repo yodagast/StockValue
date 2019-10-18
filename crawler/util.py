@@ -46,6 +46,7 @@ def get_full_ts_codes(isPro=True):
     flatten_list = lambda l: [item for sublist in l for item in sublist]
     codes = get_codelist(flatten_list(industry),isPro)
     return codes
+
 def get_codelist( industry="银行",isPro=True):
     '''
         给定行业类型，获取所有该行业的公司股票代码
@@ -116,11 +117,34 @@ def get_recent_date(isString=True):
         return today.strftime("%Y%m%d")
     return today
 
+def get_start_date(end_date=None,during=60,isString=True):
+    '''获取最近N天的起始日期
+    :param end_date:
+    :param during:
+    :param isString:
+    :return:
+    '''
+    if(end_date==None):
+        start = datetime.now()
+    else:
+        start=datetime.datetime.strptime(end_date,"YYmmdd")
+    if (start.hour < 19):
+        start = start - timedelta(during)
+    if(isString):
+        return start.strftime("%Y%m%d")
+    return start
+
 def get_cal_date(start_date=None,end_date=None,during=60,isPro=True):
+    '''计算开始和结束日期列表
+    :param start_date:
+    :param end_date:
+    :param during:
+    :param isPro:
+    :return:
+    '''
     if(end_date==None):
         end_date=get_recent_date(isString=False)
     if(start_date==None):
-        #start_date=end_date+relativedelta(months=-12)
         start_date=end_date- timedelta(days=during)
     end_date = end_date.strftime("%Y%m%d")
     start_date = start_date.strftime("%Y%m%d")
@@ -135,15 +159,12 @@ def get_cal_date(start_date=None,end_date=None,during=60,isPro=True):
     logger.info(res)
     return list(map(stringConverter,res))
 
-
 def is_cal_date(date=None):
     pro = ts.pro_api()
     df = pro.trade_cal(start_date=date, end_date=date)
     if( df.empty | df["is_open"][0] == 0):
         return False
     return True
-
-
 
 
 
