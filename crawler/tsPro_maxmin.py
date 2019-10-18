@@ -24,6 +24,8 @@ def get_maxmin(ts_code,func,start_date,end_date):
         func=pro.weekly
     elif(func=="daily"):
         func=pro.daily
+    elif(func=="monthly"):
+        func=pro.monthly
     else:
         logger.error("function not fund")
     res=pd.DataFrame()
@@ -59,11 +61,20 @@ def get_day_maxmin(ts_code,start_date,end_date):
     '''
     return get_maxmin(ts_code, "daily", start_date, end_date)
 
+def get_month_maxmin(ts_code,start_date,end_date):
+    '''获取code交易的日线、周线 月线行情
+    :param ts_code:
+    :param start_date:
+    :param end_date:
+    :return:
+    '''
+    return get_maxmin(ts_code, "monthly", start_date, end_date)
+
 if __name__ == '__main__':
     end_date=get_recent_date()
     start_date=get_start_date()
-    print(end_date,start_date)
+    code_list=get_ts_codes()
     df=get_week_maxmin(["000002.sz","600026.sh"],start_date,end_date)
     print(df)
-    df = get_maxmin(["000002.sz", "600026.sh"],"weekly", start_date, end_date)
+    df = get_maxmin(["000002.sz", "600026.sh"],"monthly", start_date, end_date)
     print(df)
