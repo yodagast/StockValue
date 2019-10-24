@@ -92,7 +92,7 @@ def get_ts_codes(isPro=True):
     short_list=["002294","002310","600867","600703","002624"]
     candidate=["600507","601601","002507","000501","601111","600377","002110","002008","000338"]
     core_list.extend(short_list)
-    core_list.extend(candidate)
+    #core_list.extend(candidate)
     if(isPro):
         return list(map(is_SH,core_list))
     return core_list
@@ -128,8 +128,9 @@ def get_start_date(end_date=None,during=60,isString=True):
         start = datetime.now()
     else:
         start=datetime.datetime.strptime(end_date,"YYmmdd")
+    start = start - timedelta(during)
     if (start.hour < 19):
-        start = start - timedelta(during)
+        start = start - timedelta(1)
     if(isString):
         return start.strftime("%Y%m%d")
     return start
