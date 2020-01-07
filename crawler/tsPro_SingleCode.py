@@ -2,6 +2,7 @@ from urllib.request import Request, urlopen
 from apscheduler.schedulers.blocking import BlockingScheduler
 from datetime import datetime,timedelta,date
 
+
 from bs4 import BeautifulSoup
 from random import randint
 import pandas as pd
@@ -11,7 +12,10 @@ import sys,getopt,time,json,requests,urllib,os,platform,logging
 from util import *
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
-pro=ts.pro_api('ec128793ed40d17b0654785138fd519fc1f1ffede1e89e5701f752ed')
+pro=ts.pro_api('44e26f14d14da304ac82045a39bf644ad0b0dc301d6a5cbf907a1907')
+pd.set_option('display.max_colwidth',500)
+pd.set_option('display.max_rows',None)
+pd.set_option('expand_frame_repr',False)
 
 def get_moneyflow(ts_code,start_date,end_date):
     df=pro.moneyflow(ts_code=ts_code,start_date=start_date,end_date=end_date)
@@ -38,26 +42,48 @@ def get_lastyear_stat(codes,start_date,end_date):
     res = pd.DataFrame()
     for ts_code in codes:
         #print(ts_code)
-        df = get_single_code_df(ts_code, start_date, end_date)
+        df = pro.daily(ts_code,start_date,end_date)
         name = get_codeName(ts_code)
         df["code_name"] = name
         logger.info("processing :{0} {1}".format(ts_code, name))
         res = res.append(df, ignore_index=True)
     return res
 
+def get_vol_stat(codes,start_date,end_date):
+    pd.set_option('display.max_colwidth', 500)
+    res = pd.DataFrame()
+    for ts_code in codes:
+        df = pro.daily(ts_code=ts_code, start_date=start_date,end_date=end_date)
+        #df=df["ts_code","trade_date","pct_chg","vol","amount"]
+        df["amount"] = df["amount"] / 1000
+        logger.info("processing :{0} ".format(ts_code))
+        print(df)
+        res = res.append(df, ignore_index=True)
+    return res
+def get_recent_date(isString=True):
+    today = datetime.now()
+    if (today.hour < 19):
+        today = today - timedelta(1)
+    if(isString):
+        return today.strftime("%Y%m%d")
+    return today
+
 
 def main():
-    dates=get_cal_date()
     #today = get_recent_date()
     end_date = get_recent_date()
-    last_year= datetime.now() - timedelta(365)
+    last_year= datetime.now() - timedelta(60)
     start_date = last_year.strftime("%Y%m%d")
-    mycodes=get_ts_codes()
-    df=get_lastyear_stat(mycodes,start_date,end_date)
-    df.to_csv("../stock/{0}-lastyear-mystock.csv".format(end_date), sep="\t", index=False)
-    fullcodes=get_full_ts_codes()
-    df=get_lastyear_stat(fullcodes, start_date, end_date)
-    df.to_csv("../stock/{0}-lastyear-fullstock.csv".format(end_date), sep="\t", index=False)
+    mycodes = ["600308.SH","600302.SH","600612.SH","600887.SH"]
+    mycodes=["000002.SZ","600027.SH","600867.SH","000963.SZ","600660.SH"
+         ,"601318.SH","600036.SH","601166.SH","601601.SH"]
+    df=get_vol_stat(mycodes,start_date, end_date)
+    tmp=df[df["ts_code"]=='000002.SZ']
+    #plot(tmp,x_col='trade_date',y_col='amount')
+    #df.to_csv("../stock/{0}-lastyear-mystock.csv".format(end_date), sep="\t", index=False)
+    #fullcodes=get_full_ts_codes()
+    #df=get_lastyear_stat(fullcodes, start_date, end_date)
+    #df.to_csv("../stock/{0}-lastyear-fullstock.csv".format(end_date), sep="\t", index=False)
 
 main()
 

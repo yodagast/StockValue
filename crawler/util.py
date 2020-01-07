@@ -15,6 +15,7 @@ from email.mime.application import MIMEApplication
 from smtplib import SMTP_SSL
 #from email.MIMEMultipart import MIMEMultipart
 
+pro = ts.pro_api("44e26f14d14da304ac82045a39bf644ad0b0dc301d6a5cbf907a1907")
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -73,13 +74,11 @@ def get_codeName(ts_code):
     :param ts_code:给定股票代码，返回股票名称
     :return:
     '''
-    pro = ts.pro_api()
     df = pro.namechange(ts_code=ts_code, fields='ts_code,name,start_date,end_date,change_reason')
     if(df.shape[1]>0):
         res= df["name"][0]
     else:
         res= "ERROR"
-
     logger.info("get code {0} name: {1}".format(ts_code,res))
     return res
 
@@ -149,9 +148,8 @@ def get_cal_date(start_date=None,end_date=None,during=60,isPro=True):
         start_date=end_date- timedelta(days=during)
     end_date = end_date.strftime("%Y%m%d")
     start_date = start_date.strftime("%Y%m%d")
-    pro = ts.pro_api()
     df=pro.trade_cal(start_date=start_date,end_date=end_date)
-    res=df[ "cal_date"][df["is_open"] == 1].to_list()
+    res=df[ "cal_date"][df["is_open"] == 1].tolist()
     if(isPro==True):
         return  res
     def stringConverter(x):
