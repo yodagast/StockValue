@@ -41,7 +41,6 @@ def get_single_code_df(ts_code,start_date,end_date):
 def get_lastyear_stat(codes,start_date,end_date):
     res = pd.DataFrame()
     for ts_code in codes:
-        #print(ts_code)
         df = pro.daily(ts_code,start_date,end_date)
         name = get_codeName(ts_code)
         df["code_name"] = name
@@ -50,15 +49,18 @@ def get_lastyear_stat(codes,start_date,end_date):
     return res
 
 def get_vol_stat(codes,start_date,end_date):
-    pd.set_option('display.max_colwidth', 500)
     res = pd.DataFrame()
+    tmp= pd.DataFrame()
     for ts_code in codes:
         df = pro.daily(ts_code=ts_code, start_date=start_date,end_date=end_date)
-        #df=df["ts_code","trade_date","pct_chg","vol","amount"]
         df["amount"] = df["amount"] / 1000
         logger.info("processing :{0} ".format(ts_code))
         print(df)
+        tmp=df.groupby(["ts_code"]).agg({"high":"max","low":"min","change":"sum"})#.rest_index()
+        tmp = tmp.append(df, ignore_index=True)
         res = res.append(df, ignore_index=True)
+    time.sleep(1)
+    logger.info(tmp)
     return res
 def get_recent_date(isString=True):
     today = datetime.now()
@@ -80,7 +82,7 @@ def main():
     df=get_vol_stat(mycodes,start_date, end_date)
     tmp=df[df["ts_code"]=='000002.SZ']
     #plot(tmp,x_col='trade_date',y_col='amount')
-    #df.to_csv("../stock/{0}-lastyear-mystock.csv".format(end_date), sep="\t", index=False)
+    df.to_csv("../data/{0}-stockdaily.csv".format(end_date), sep="\t", index=False)
     #fullcodes=get_full_ts_codes()
     #df=get_lastyear_stat(fullcodes, start_date, end_date)
     #df.to_csv("../stock/{0}-lastyear-fullstock.csv".format(end_date), sep="\t", index=False)

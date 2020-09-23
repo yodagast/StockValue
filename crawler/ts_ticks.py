@@ -8,11 +8,13 @@ import pandas as pd
 import tushare as ts
 import h5py as f
 import sys,getopt,time,json,requests,urllib,os,platform,logging
-from util import get_codelist
-from util import *
+from crawler.util import get_codelist
+from crawler.util import *
 
 logging.basicConfig(level=logging.INFO, format=' %(message)s ')
 logger = logging.getLogger(__name__)
+
+http="http://money.finance.sina.com.cn/quotes_service/api/json_v2.php/CN_MarketData.getKLineData?symbol=sz000002&scale=5&ma=5&datalen=1023"
 
 df = ts.get_tick_data('600848',date='2018-12-12',src='tt')
 

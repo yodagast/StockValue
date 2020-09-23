@@ -8,6 +8,10 @@ import pandas as pd
 import tushare as ts
 import sys,getopt,time,json,requests,urllib,os,platform,re,copy,codecs
 
+pro=ts.pro_api('44e26f14d14da304ac82045a39bf644ad0b0dc301d6a5cbf907a1907')
+pd.set_option('display.max_colwidth',500)
+pd.set_option('display.max_rows',None)
+pd.set_option('expand_frame_repr',False)
 url="http://fund.eastmoney.com/ETFN_jzzzl.html"
 url="http://fund.eastmoney.com/cnjy_jzzzl.html"
 
@@ -31,16 +35,11 @@ def get_fund_list(url):
         result = urlopen(request).read().decode('GBK')
     except urllib.error.URLError as e:
         return soup
-    #result=urlopen(request).read().decode('utf-8')
-    #result=get_html(url)
     time.sleep(randint(1,10))
     cnt=1
     print("索引\t基金代码\t基金名\t增长值\t增长率\t单位净值\t累计净值\t单位净值(昨)\t累计净值(昨)\t市价\t折价率")
     res=[]
-    for soup in BeautifulSoup(result, 'html.parser').find_all("tr",id=re.compile('^tr')):#.find_all("table", {"class": "dbtable"}):
-        #print("id\tname\tgwth\tgwth_rate\tdwjz\tljjz\ty_dwjz\ty_ljjz\tprice\tcut_off")
-        #print(soup.get_text(),end="\t")
-        #print(cnt,end="\t")
+    for soup in BeautifulSoup(result, 'html.parser').find_all("tr",id=re.compile('^tr')):
         cnt=cnt+1
         tmp={}
         #print(soup.get("id").replace("tr",""),end="\t")
@@ -174,9 +173,7 @@ def stock_df_to_csv(df,name="cnjj"):
     date = time.strftime("%Y-%m-%d", time.localtime())
     if (os.path.exists("../fund/") == False):
         os.mkdir("../fund/")
-    if (os.path.exists("../fund/{}".format(date)) == False):
-        os.mkdir("../fund/{}".format(date))
-    df.to_csv("../fund/{0}/{1}.csv".format(date,name),sep="\t", index=False)
+    df.to_csv("../fund/{0}-{1}.csv".format(date,name),sep="\t", index=False)
 
 def fund_info_to_csv(df):
     df["StructuredFund"] = df["name"].str.contains("A|B|分级", regex=True)
@@ -208,7 +205,8 @@ def main_qq():
         #if(cnt>5):break
         list.append(dict)
     date = time.strftime("%Y-%m-%d", time.localtime())
-    pd.DataFrame(list).sort_values(by=["增长率"]).to_csv("../fund/fund-detail-{}.csv".format(date),sep="\t",index=False)
+    df=pd.DataFrame(list).sort_values(by=["增长率"])
+    df.to_csv("../fund/fund-detail-{}.csv".format(date),sep="\t",index=False)
 
 main_qq()
 

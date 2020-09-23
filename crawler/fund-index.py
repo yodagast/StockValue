@@ -11,7 +11,7 @@ import sys,getopt,time,json,requests,urllib,os,platform,logging
 from util import *
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
-pro=ts.pro_api('ec128793ed40d17b0654785138fd519fc1f1ffede1e89e5701f752ed')
+pro=ts.pro_api('44e26f14d14da304ac82045a39bf644ad0b0dc301d6a5cbf907a1907')
 
 def get_fund_basic(cols=["ts_code","name","issue_amount","invest_type"],amount=20.0):
     df = pro.fund_basic(market='E')

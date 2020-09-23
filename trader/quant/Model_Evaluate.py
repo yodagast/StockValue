@@ -9,7 +9,7 @@ def model_eva(stock,state_dt,para_window,para_dc_window):
     # 建立数据库连接，设置tushare token
     db = pymysql.connect(host='127.0.0.1', user='root', passwd='admin', db='stock', charset='utf8')
     cursor = db.cursor()
-    ts.set_token('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    ts.set_token('44e26f14d14da304ac82045a39bf644ad0b0dc301d6a5cbf907a1907')
     pro = ts.pro_api()
     # 建评估时间序列, para_window参数代表回测窗口长度
     model_test_date_start = (datetime.datetime.strptime(state_dt, '%Y-%m-%d') - datetime.timedelta(days=para_window)).strftime(
