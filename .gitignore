@@ -2,7 +2,7 @@
 .idea/misc.xml
 data/*
 fund/*
-stock/*
+stock/20*
 crawler/__*
 ticks/*
 unionpay/*
