@@ -17,7 +17,7 @@ def parquet2delta(input_dir="./202006/",output_path="./delta/"):
 
 def parquet2delta_fn(pp='price'):
     config = configparser.ConfigParser()
-    config.read("./config.cfg")
+    config.read("../data/config.cfg")
     input_dir = config.get("Delta", "home_dir")
     ohlcv_dir = config.get("Delta", "ohlcv_dir")
     price_dir = config.get("Delta", "price_dir")
@@ -40,10 +40,10 @@ spark = SparkSession.builder.appName("MyApp") \
         .getOrCreate()
 #parquet2delta_fn()
 def get_price():
-    pp = "/Volumes/RADAGAST/stock/price_delta"
+    pp = "/media/yodagast/RADAGAST/stock/price_delta"
     codes=str('600036.SH,601601.SH,300498.SZ,000002.SZ,601318.SH,601166.SH').split(",")
     config = configparser.ConfigParser()
-    config.read("./config.cfg")
+    config.read("../data/config.cfg")
     codes = config.get("Stock", "codes").split(",")
     df = spark.read.format('delta').load(pp). \
         filter(F.col("Date").between('2020-07-01', '2020-08-10'))

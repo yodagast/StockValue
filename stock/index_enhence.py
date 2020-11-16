@@ -9,7 +9,7 @@ import tushare as ts
 import sys,getopt,time,json,requests,urllib,os,platform,configparser
 import talib as ta
 from urllib.parse import urlencode
-from crawler.util import *
+import logging
 logging.basicConfig(level=logging.INFO, format='%(message)s')
 logger = logging.getLogger(__name__)
 pro=ts.pro_api('44e26f14d14da304ac82045a39bf644ad0b0dc301d6a5cbf907a1907')
